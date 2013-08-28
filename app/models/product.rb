@@ -73,19 +73,19 @@ class Product < ActiveRecord::Base
     value = ""
     case attribute.backend_type
       when "varchar"
-        attribute_entity          = ProductEntityVarchar.first( :conditions => { :entity_id => product_id , :attribute_id => attribute.attribute_id}, :select => "value" ) 
+        attribute_entity          = ProductEntityVarchar.where(  { entity_id: product_id , attribute_id: attribute.attribute_id} ).first.select("value") 
       when "int"
-        attribute_entity          = ProductEntityInt.first( :conditions => { :entity_id => product_id , :attribute_id => attribute.attribute_id}, :select => "value" )
+        attribute_entity          = ProductEntityInt.where(  { entity_id: product_id , attribute_id: attribute.attribute_id} ).first.select("value") 
       when "decimal"
-        attribute_entity          = ProductEntityDecimal.first( :conditions => { :entity_id => product_id , :attribute_id => attribute.attribute_id}, :select => "value" )
+        attribute_entity          = ProductEntityDecimal.where(  { entity_id: product_id , attribute_id: attribute.attribute_id} ).first.select("value") 
       when "text"
-        attribute_entity          = ProductEntityText.first( :conditions => { :entity_id => product_id , :attribute_id => attribute.attribute_id}, :select => "value" )
+        attribute_entity          = ProductEntityText.where(  { entity_id: product_id , attribute_id: attribute.attribute_id} ).first.select("value") 
       when "media_gallery"
-        attribute_entity          = ProductEntityMediaGallery.first( :conditions => { :entity_id => product_id , :attribute_id => attribute.attribute_id}, :select => "value" )
+        attribute_entity          = ProductEntityMediaGallery.where(  { entity_id: product_id , attribute_id: attribute.attribute_id} ).first.select("value") 
     end
  
     if attribute_entity
-      value                       = attribute_entity['value']
+      value                       = attribute_entity.value
     end
     value
   end
