@@ -1,0 +1,209 @@
+$(function () {
+
+$("#include_group")
+	.jstree({ 
+		// List of active plugins
+		"plugins" : [ 
+			"themes","json_data","ui","crrm","cookies","dnd","types"
+		],
+
+		// I usually configure the plugin that handles the data first
+		// This example uses JSON as it is most common
+		"json_data" : { 
+			// This tree is ajax enabled - as this is most common, and maybe a bit more complex
+			// All the options are almost the same as jQuery's AJAX (read the docs)
+			"ajax" : {
+				// the URL to fetch the data
+				"url" : "/attribute_groups/get_attributes.json",
+				// the `data` function is executed in the instance's scope
+				// the parameter is the node being loaded 
+				// (may be -1, 0, or undefined when loading the root nodes)
+				"data" : function (n) {
+                                        // the result is fed to the AJAX request `data` option
+                                        return {
+                                                "attribute_set_id" : SET_ID,
+                                                "type" : "inner"
+                                        };
+                                    }
+			}
+		},
+		// Using types - most of the time this is an overkill
+		// read the docs carefully to decide whether you need types
+		"types" : {
+			// I set both options to -2, as I do not need depth and children count checking
+			// Those two checks may slow jstree a lot, so use only when needed
+			"max_depth" : -2,
+			"max_children" : -2,
+			// I want only `drive` nodes to be root nodes 
+			// This will prevent moving or creating any other type as a root node
+			"valid_children" : [ "system_group", "common_group","user_define_group" ],
+			"types" : {
+                    // The default type
+                    "system_attribute" : {
+                            // I want this type to have no children (so only leaf nodes)
+                            // In my case - those are files
+                            "valid_children" : "none",
+                            // If we specify an icon for the default type it WILL OVERRIDE the theme icons
+                            "icon" : {
+                                    "image" : "/assets/jstree_undelete_node.png"
+                            },
+							"start_drag" : false,
+                            "move_node" : false,
+                            "delete_node" : false,
+                            "remove" : false
+                    },
+					"common_attribute" : {
+                            // I want this type to have no children (so only leaf nodes)
+                            // In my case - those are files
+                            "valid_children" : "none",
+                            // If we specify an icon for the default type it WILL OVERRIDE the theme icons
+                            "icon" : {
+                                    "image" : "/assets/jstree_common_node.png"
+                            }
+                    },
+                    "system_group" : {
+                            // can have files and folders inside, but NOT other `drive` nodes
+                            "valid_children" : [ "system_attribute", "common_attribute" ],
+                            "icon" : {
+                                    "image" : "/assets/jstree_root_node.png"
+                            },
+                            // those prevent the functions with the same name to be used on `drive` nodes
+                            // internally the `before` event is used
+                            "start_drag" : false,
+                            "move_node" : false,
+                            "delete_node" : false,
+                            "remove" : false
+                    },
+                    "common_group" : {
+                            // can have files and folders inside, but NOT other `drive` nodes
+                            "valid_children" : [ "common_attribute" ],
+                            "icon" : {
+                                    "image" : "/assets/jstree_root_node.png"
+                            }
+                    },
+                    "user_define_group" : {
+                            // can have files and folders inside, but NOT other `drive` nodes
+                            "valid_children" : [ "common_attribute" ],
+                            "icon" : {
+                                    "image" : "/assets/jstree_root_node.png"
+                            }
+                    }
+            }
+		},
+		// UI & core - the nodes to initially select and open will be overwritten by the cookie plugin
+
+		// the UI plugin - it handles selecting/deselecting/hovering nodes
+		"ui" : {
+			// this makes the node with ID node_4 selected onload
+			"initially_select" : []
+		},
+		// the core plugin - not many options here
+		"core" : { 
+			// just open those two nodes up
+			// as this is an AJAX enabled tree, both will be downloaded from the server
+			"initially_open" : [] 
+		}
+	});
+
+
+$("#other_attribute")
+        .jstree({
+                // List of active plugins
+                "plugins" : [
+                        "themes","json_data","ui","crrm","cookies","dnd","types"
+                ],
+
+                // I usually configure the plugin that handles the data first
+                // This example uses JSON as it is most common
+                "json_data" : {
+                        // This tree is ajax enabled - as this is most common, and maybe a bit more complex
+                        // All the options are almost the same as jQuery's AJAX (read the docs)
+                        "ajax" : {
+				    "url" : "/attribute_groups/get_attributes.json", 
+                                    "data" : function (n) {
+                                        // the result is fed to the AJAX request `data` option
+                                        return {
+                                                "attribute_set_id" : SET_ID,
+                                                "type" : "other",        
+                                                "entity_type_id" : ENTITY_TYPE_ID
+                                        };
+                                    }
+			       }
+                },
+                // Using types - most of the time this is an overkill
+                // read the docs carefully to decide whether you need types
+                "types" : {
+                        // I set both options to -2, as I do not need depth and children count checking
+                        // Those two checks may slow jstree a lot, so use only when needed
+                        "max_depth" : -2,
+                        "max_children" : -2,
+                        // I want only `drive` nodes to be root nodes
+                        // This will prevent moving or creating any other type as a root node
+                        "valid_children" : [ "undefine_group" ],
+                        "types" : {
+                                // The default type
+                                "system_attribute" : {
+                                        // I want this type to have no children (so only leaf nodes)
+                                        // In my case - those are files
+                                        "valid_children" : "none",
+                                        // If we specify an icon for the default type it WILL OVERRIDE the theme icons
+                                        "icon" : {
+                                                "image" : "/assets/jstree_undelete_node.png"
+                                        },
+										"start_drag" : false,
+                                        "move_node" : false,
+                                        "delete_node" : false,
+                                        "remove" : false
+                                },
+								"common_attribute" : {
+                                        // I want this type to have no children (so only leaf nodes)
+                                        // In my case - those are files
+                                        "valid_children" : "none",
+                                        // If we specify an icon for the default type it WILL OVERRIDE the theme icons
+                                        "icon" : {
+                                                "image" : "/assets/jstree_common_node.png"
+                                        }
+                                },
+								"undefine_group" : {
+                                        // can have files and folders inside, but NOT other `drive` nodes
+                                        "valid_children" : ["common_attribute" ],
+                                        "icon" : {
+                                        },
+                                        // those prevent the functions with the same name to be used on `drive` nodes
+                                        // internally the `before` event is used
+                                        "start_drag" : false,
+                                        "move_node" : false,
+                                        "delete_node" : false,
+                                        "remove" : false
+                                }
+                        }
+                },
+                // UI & core - the nodes to initially select and open will be overwritten by the cookie plugin
+
+                // the UI plugin - it handles selecting/deselecting/hovering nodes
+                "ui" : {
+                        // this makes the node with ID node_4 selected onload
+                        "initially_select" : []
+                },
+                // the core plugin - not many options here
+                "core" : {
+                        // just open those two nodes up
+                        // as this is an AJAX enabled tree, both will be downloaded from the server
+                        "initially_open" : []
+                }
+        });
+       
+		$("#btn-add-group").bind("click", function(){
+          $("#include_group").jstree("create", null, "after", {"attr":{ "rel" : "user_define_group"  }});
+        });
+	    
+	    $("#btn-delete-group").bind("click", function(){
+          $("#include_group").jstree("remove");
+        });
+
+		$("#btn-submit-attribute-set").bind("click", function(){
+                var data = jQuery.jstree._reference($("#include_group")).get_json(-1, ["id"]);
+                $("#group_data").val( JSON.stringify( data ) );                
+		$("#edit_attribute_set").submit()
+        });
+});

@@ -1,0 +1,31 @@
+<div class="container-fluid">
+<div class="row-fluid"> 
+        <div class="row-fluid">
+		<div class="span12 center login-header">
+			<h2>城市生活后台管理--登录</h2>
+		</div><!--/span-->
+	</div><!--/row-->
+	<div class="row-fluid">
+		<div class="well span5 center login-box">
+			<div class="alert alert-info">
+				重置密码
+			</div>
+			<%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :class => "form-horizontal", :method => "post") do |f| %>
+				<fieldset>
+					<div class="input-prepend" title="邮箱" data-rel="tooltip">
+						<span class="add-on"><i class="icon-user"></i></span>
+					    <%= f.email_field :email, :autofocus => true, :class => "input-large span10" %>
+					</div>
+					<div class="clearfix"></div> 
+
+					<p class="center span5">
+					<%= f.submit "发送重置密码邮件", :class => "btn btn-primary" %> 
+					</p>
+				</fieldset> 
+				<%= render "devise/shared/links" %>
+			<% end %>
+		</div><!--/span-->
+	</div><!--/row-->
+		</div><!--/fluid-row-->
+
+</div><!--/.fluid-container-->
