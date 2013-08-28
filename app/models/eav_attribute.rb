@@ -2,6 +2,7 @@
 #author cway 2013-07-09
 
 class EavAttribute < ActiveRecord::Base
+  attr_accessor :value
   self.table_name                              = "eav_attribute"
   validates :attribute_code, :entity_type_id, :presence => true
 

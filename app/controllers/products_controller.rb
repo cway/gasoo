@@ -123,10 +123,10 @@ class ProductsController < ApplicationController
       #attribute.attribute_group_name = nil
       #@group_list[attribute.attribute_group_id]["attributes"].push( attribute )
       attribute.attribute_group_name                            = nil
-      attribute["value"]                                        = Product.get_product_attribute_value( params[:id], attribute )
+      attribute.value                                           = Product.get_product_attribute_value( params[:id], attribute )
       @group_list[attribute.attribute_group_id]["attributes"].push( attribute )
-      unless attribute["value"] == ""
-        @product[attribute.attribute_code]                      = attribute["value"]
+      unless attribute.value == ""
+        @product[attribute.attribute_code]                      = attribute.value
       end
     end
   end
