@@ -149,12 +149,11 @@ class Product < ActiveRecord::Base
 
   #get attributes for create product
   def self.get_attributes( product_type_id, attribute_set_id)
-    self.find_by_sql( "select eav_attribute.attribute_code, eav_attribute.attribute_id, eav_attribute.backend_type, eav_attribute.frontend_label, eav_attribute.frontend_input, eav_attribute.is_required, eav_attribute_group.attribute_group_id, eav_attribute_group.attribute_group_name from eav_entity_attribute left join eav_attribute_group on eav_attribute_group.attribute_group_id = eav_entity_attribute.attribute_group_id left join eav_attribute on eav_attribute.attribute_id = eav_entity_attribute.attribute_id  where eav_entity_attribute.entity_type_id = #{product_type_id} and eav_entity_attribute.attribute_set_id = #{attribute_set_id}" )
+    EavAttribute.find_by_sql( "select eav_attribute.attribute_code, eav_attribute.attribute_id, eav_attribute.backend_type, eav_attribute.frontend_label, eav_attribute.frontend_input, eav_attribute.is_required, eav_attribute_group.attribute_group_id, eav_attribute_group.attribute_group_name from eav_entity_attribute left join eav_attribute_group on eav_attribute_group.attribute_group_id = eav_entity_attribute.attribute_group_id left join eav_attribute on eav_attribute.attribute_id = eav_entity_attribute.attribute_id  where eav_entity_attribute.entity_type_id = #{product_type_id} and eav_entity_attribute.attribute_set_id = #{attribute_set_id}" )
   end
   
   def self.get_attributes_by_frontend_input( product_type_id, attribute_set_id, frontend_input)
-    attribute_list                = self.find_by_sql( "select eav_attribute.attribute_id, eav_attribute.frontend_label from eav_attribute left join eav_entity_attribute on eav_attribute.attribute_id = eav_entity_attribute.attribute_id and eav_attribute.frontend_input = \"#{frontend_input}\" where eav_entity_attribute.entity_type_id = #{product_type_id} and eav_entity_attribute.attribute_set_id = #{attribute_set_id}" )
-    return attribute_list
+    EavAttribute.find_by_sql( "select eav_attribute.attribute_id, eav_attribute.frontend_label from eav_attribute left join eav_entity_attribute on eav_attribute.attribute_id = eav_entity_attribute.attribute_id and eav_attribute.frontend_input = \"#{frontend_input}\" where eav_entity_attribute.entity_type_id = #{product_type_id} and eav_entity_attribute.attribute_set_id = #{attribute_set_id}" )
   end
   
   def self.insert_entity_values( type_values, type )
