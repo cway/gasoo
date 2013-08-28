@@ -64,4 +64,5 @@
     <script language="javascript">
        var PRODUCT_ID                = <%= @product.entity_id %>;
        var PRODUCT_ENTITY            = <%= raw @product.to_json( :methods => [:product_attributes, :children, :product_attributes] ) %>;
+    </script>
 </div><!--/.fluid-container-->
