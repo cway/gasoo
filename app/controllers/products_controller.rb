@@ -117,7 +117,7 @@ class ProductsController < ApplicationController
       end
       
       if attribute.frontend_input == "select" or attribute.frontend_input == "multiselect"
-        attribute["options"]                                    = AttributeOption.find_all_by_attribute_id( attribute.attribute_id )
+        attribute.options                                       = AttributeOption.find_all_by_attribute_id( attribute.attribute_id )
       end
     
       #attribute.attribute_group_name = nil
@@ -126,7 +126,7 @@ class ProductsController < ApplicationController
       attribute.value                                           = Product.get_product_attribute_value( params[:id], attribute )
       @group_list[attribute.attribute_group_id]["attributes"].push( attribute )
       unless attribute.value == ""
-        @product[attribute.attribute_code]                      = attribute.value
+        @product.eval(attribute.attribute_code)                 = attribute.value
       end
     end
   end
