@@ -12,23 +12,18 @@ class AttributeSetsController < ApplicationController
   # GET /attribute_sets/new
   def new
     @entity_type                = EntityType.find( ApplicationController::PRODUCT_TYPE_ID )
-    @attribute_sets             = AttributeSet.find_all_by_entity_type_id( ApplicationController::PRODUCT_TYPE_ID )
+    @attribute_sets             = AttributeSet.where( entity_type_id: ApplicationController::PRODUCT_TYPE_ID )
     @attribute_set              = AttributeSet.new
   end
   
   # POST /attribute_sets/create
-  def create 
-    @attribute_set              = AttributeSet.new(params[:attribute_set])
-
-    
-    if @attribute_set.save
-      parent_group_attributes   = EntityAttribute.find_all_by_attribute_set_id( params[:attribute_set][:parent_set_id] )    
-      res                       = EntityAttribute.clone_parent_attributes( @attribute_set, parent_group_attributes )
+  def create  
+    begin
+      AttributeSet.create_attribute_set( params ) 
       @init_attribute_set_js    = true        
       redirect_to :action => "edit", :notice => '属性集创建成功.'
-    else
-      @entity_types             = EntityType.all
-      redirect_to :action => "new"
+    rescue => err
+      redirect_to :action => "new", : notice => err.message
     end
   end
   
@@ -45,9 +40,8 @@ class AttributeSetsController < ApplicationController
     group_data                  =   params[:group_data]
     group_list                  =   JSON.parse group_data #ActiveSupport::JSON.decode( group_data )
     entity_type_id              =   params[:entity_type_id]
-    res                         =   EntityAttribute.where( { :entity_type_id => entity_type_id, :attribute_set_id => attribute_set_id } ).delete_all
-    
-    res                         =   EntityAttribute.insert_attributes( group_list, entity_type_id, attribute_set_id ) 
+    EntityAttribute.where( { entity_type_id: entity_type_id, attribute_set_id: attribute_set_id } ).delete_all
+    EntityAttribute.insert_attributes( group_list, entity_type_id, attribute_set_id ) 
 
     redirect_to  :action => 'index'
   end

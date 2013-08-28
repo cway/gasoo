@@ -21,4 +21,22 @@ class AttributeSet < ActiveRecord::Base
     attribute_sets_list 
   end
 
+  def self.create_attribute_set
+    verify_params params, 'attribute_set'
+    verify_params params[:attribute_set], 'parent_set_id'
+
+    @attribute_set              = self.new( params[:attribute_set].permit! )
+    if @attribute_set.save
+      parent_group_attributes   = EntityAttribute.where( attribute_set_id: params[:attribute_set][:parent_set_id] )    
+      EntityAttribute.clone_parent_attributes( @attribute_set, parent_group_attributes )
+    else 
+      raise "创建属性集失败"
+    end
+  end
+
+  def self.verify_params( params, key )
+    unless params.has_key? key
+      raise ArgumentError, "no params named #{key}" 
+    end
+  end
 end
