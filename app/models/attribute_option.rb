@@ -1,7 +1,7 @@
 #encoding: utf-8
 #author cway 2013-07-22
 
-class AttributeOption < BaseModel
+class AttributeOption < ActiveRecord::Base
   self.table_name        = "eav_attribute_option"
   
   def self.insert_options( attribute_id, options )

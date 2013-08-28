@@ -1,8 +1,8 @@
 #encoding: utf-8
 #author cway 2013-07-09
 
-class EavAttribute < BaseModel
-
+class EavAttribute < ActiveRecord::Base
+  include  ParamsFilter
   self.table_name                              = "eav_attribute"
   validates :attribute_code, :entity_type_id, :presence => true
 
