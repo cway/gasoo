@@ -17,7 +17,7 @@ class AttributeGroupsController < ApplicationController
   
 
   private
-  def self.get_inner_attributes( attribute_set_id )
+  def get_inner_attributes( attribute_set_id )
     attributes_list                                             = Array.new;
     group_list                                                  = Hash.new;
     attributes_records                                          = AttributeGroup.group_inner_attributes( attribute_set_id )
@@ -41,7 +41,7 @@ class AttributeGroupsController < ApplicationController
     attributes_list
   end
 
-  def self.get_other_attributes( attribute_set_id )
+  def get_other_attributes( attribute_set_id )
     attributes_list                                             = Array.new;
     group_list                                                  = Hash.new;
     group_list["attr"]                                          = { "id" => 0, "rel" => "undefine_group" }
