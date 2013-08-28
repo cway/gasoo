@@ -2,7 +2,7 @@
 #author cway 2013-07-09
 
 class Product < ActiveRecord::Base
-  attr_accessor :configurable_attributes, :children, :attributes
+  attr_accessor :configurable_attributes, :children, :product_attributes
   #attr_accessible :attribute_set_id, :entity_type_id, :type_id, :sku, :has_options, :required_options
   #attr_writer :price, :qty, :name
 

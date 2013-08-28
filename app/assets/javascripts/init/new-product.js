@@ -3,12 +3,22 @@ function ProductObj( entity )
    //entity                   = JSON.parse( obj_str );
    for(var entity_code in entity)
    {
-      this[entity_code]      = entity[entity_code];
+      if( entity_code == 'product_attributes' )
+      {
+          for(var entity_attribute_code in entity[entity_code])
+          {
+              this[entity_attribute_code]   = entity[entity_code][entity_attribute_code]
+          }
+      }
+      else
+      {
+        this[entity_code]                   = entity[entity_code];
+      }
    } 
 
    if( this.hasOwnProperty( "image" ) )
    {
-     this["image"]          = JSON.parse( this["image"] );
+     this["image"]                          = JSON.parse( this["image"] );
    }
 
    console.log( this );
