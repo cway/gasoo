@@ -73,15 +73,15 @@ class Product < ActiveRecord::Base
     value = ""
     case attribute.backend_type
       when "varchar"
-        attribute_entity          = ProductEntityVarchar.where(  { entity_id: product_id , attribute_id: attribute.attribute_id} ).first.select("value") 
+        attribute_entity          = ProductEntityVarchar.where(  { entity_id: product_id , attribute_id: attribute.attribute_id} ).first
       when "int"
-        attribute_entity          = ProductEntityInt.where(  { entity_id: product_id , attribute_id: attribute.attribute_id} ).first.select("value") 
+        attribute_entity          = ProductEntityInt.where(  { entity_id: product_id , attribute_id: attribute.attribute_id} ).first
       when "decimal"
-        attribute_entity          = ProductEntityDecimal.where(  { entity_id: product_id , attribute_id: attribute.attribute_id} ).first.select("value") 
+        attribute_entity          = ProductEntityDecimal.where(  { entity_id: product_id , attribute_id: attribute.attribute_id} ).first 
       when "text"
-        attribute_entity          = ProductEntityText.where(  { entity_id: product_id , attribute_id: attribute.attribute_id} ).first.select("value") 
+        attribute_entity          = ProductEntityText.where(  { entity_id: product_id , attribute_id: attribute.attribute_id} ).first
       when "media_gallery"
-        attribute_entity          = ProductEntityMediaGallery.where(  { entity_id: product_id , attribute_id: attribute.attribute_id} ).first.select("value") 
+        attribute_entity          = ProductEntityMediaGallery.where(  { entity_id: product_id , attribute_id: attribute.attribute_id} ).first
     end
  
     if attribute_entity
