@@ -117,7 +117,7 @@ class ProductsController < ApplicationController
       end
       
       if attribute.frontend_input == "select" or attribute.frontend_input == "multiselect"
-        attribute.options                                       = AttributeOption.find_all_by_attribute_id( attribute.attribute_id )
+        attribute.options                                       = AttributeOption.where( { attribute_id: attribute.attribute_id} )
       end
     
       #attribute.attribute_group_name = nil
