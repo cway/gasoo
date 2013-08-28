@@ -9,7 +9,7 @@ class AttributeSet < ActiveRecord::Base
   
   #get category index view data
   def self.get_index_data
-    attribute_sets         = self.joins( :eav_entity_type )#self.find_by_sql("select `eav_attribute_set`.*, `eav_entity_type`.entity_type_code from eav_attribute_set left join eav_entity_type on eav_entity_type.entity_type_id = eav_attribute_set.entity_type_id;")
+    attribute_sets         = find_by_sql("select `eav_attribute_set`.*, `eav_entity_type`.entity_type_code from eav_attribute_set left join eav_entity_type on eav_entity_type.entity_type_id = eav_attribute_set.entity_type_id;") #self.includes( :eav_entity_type )
   end
 
   def self.all_with_primary_key

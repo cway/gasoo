@@ -6,6 +6,7 @@ class AttributeSetsController < ApplicationController
   # GET /index
   def index
     @attribute_sets             = AttributeSet.get_index_data
+    puts @attribute_sets.to_json
   end
   
   # GET /attribute_sets/new
