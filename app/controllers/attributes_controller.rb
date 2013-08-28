@@ -29,7 +29,9 @@ class AttributesController < ApplicationController
   def create 
     begin
       @attribute                              =   EavAttribute.create_eav_attribute( params )
-      redirect_to(@attribute,:notice => '创建属性成功')
+      redirect_to :action => 'show', :id => @attribute.id, :notice => '创建属性成功'
+    rescue ActiveRecord::RecordNotUnique => err
+      render :json => "该属性已存在"
     rescue => err
       puts err.backtrace
       redirect_to :action => "new"
@@ -47,8 +49,8 @@ class AttributesController < ApplicationController
 
   def update 
     begin
-        @attribute                            =   EavAttribute.update_eav_attribute( params ) 
-        redirect_to @attribute, :notice => '修改属性成功'
+      @attribute                            =   EavAttribute.update_eav_attribute( params ) 
+      redirect_to :action => 'show', :id => @attribute.id, :notice => '修改属性成功'
     rescue => err
       puts err.backtrace
       redirect_to :action => "edit", :id => params[:id]
