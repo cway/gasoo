@@ -3,7 +3,7 @@
 
 class ProductType < ActiveRecord::Base
   validates       :product_type_name, :presence => true
-  set_table_name  "product_type"
+  self.table_name                          =  "product_type"
 
   def self.all_with_primary_key
     types                                  =  self.all
