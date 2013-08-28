@@ -3,7 +3,7 @@
 
 module ParamsFilter
 
-  def self.verify_params( params, key )
+  def verify_params( params, key )
     unless params.has_key? key
   		raise ArgumentError, "no params named #{key}" 
   	end
