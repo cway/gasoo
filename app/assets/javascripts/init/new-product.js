@@ -4,7 +4,7 @@ function ProductObj( entity )
    for(var entity_code in entity)
    {
       this[entity_code]      = entity[entity_code];
-   }
+   } 
 
    if( this.hasOwnProperty( "image" ) )
    {

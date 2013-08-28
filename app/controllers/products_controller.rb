@@ -11,8 +11,7 @@ class ProductsController < ApplicationController
     product_types                = ProductType.all_with_primary_key
     attribute_sets               = AttributeSet.all_with_primary_key
     attribute_values             = Product.get_index_attributes
-
-    puts product_types
+ 
     render 'index', :locals => { :product_types => product_types, :attribute_sets => attribute_sets, :attribute_values => attribute_values }
   end
 
@@ -85,20 +84,20 @@ class ProductsController < ApplicationController
   end
 
   def init_product_params( attribute_set_id, type_id, params )
-    @product["attribute_set_id"]     = attribute_set_id
-    @product["type_id"]              = type_id
-    @product["entity_type_id"]       = ApplicationController::PRODUCT_TYPE_ID
+    @product.attribute_set_id        = attribute_set_id
+    @product.type_id                 = type_id
+    @product.entity_type_id          = ApplicationController::PRODUCT_TYPE_ID
 
-    if @product["type_id"] == ApplicationController::CONFIGURABLE_PRODUCT_ID
+    if @product.type_id == ApplicationController::CONFIGURABLE_PRODUCT_ID
       if params[:configurable_attributes]
-        @product["configurable_attributes"]          = params[:configurable_attributes]
-        @product["configurable_attributes"].each_with_index do | attribute_id, index |
-          @product["configurable_attributes"][index] = attribute_id.to_i
+        @product.configurable_attributes             = params[:configurable_attributes]
+        @product.configurable_attributes.each_with_index do | attribute_id, index |
+          @product.configurable_attributes[index]    = attribute_id.to_i
         end
-        @product["required_options"] = 1
-        @product["has_options"]      = 1
+        @product.required_options    = 1
+        @product.has_options         = 1
       else
-        @product["type_id"]          = ApplicationController::SIMPLE_PRODUCT_ID
+        @product.type_id             = ApplicationController::SIMPLE_PRODUCT_ID
       end
     end
   end
@@ -153,23 +152,22 @@ class ProductsController < ApplicationController
   # GET /products/1/edit
   def edit
     @product                                                    = Product.find(params[:id])
-
     @group_list                                                 = Hash.new
     init_product_group_list( @product.attribute_set_id )
 
     if @product.type_id.to_i == ApplicationController::CONFIGURABLE_PRODUCT_ID
-      childs                                                    = ProductRelation.find(:all, :conditions => [ "parent_id = #{@product.entity_id}" ], :select => "child_id" )
-      @product['childs']                                        = Array.new 
-      childs.each do |child|
-        @product['childs'].push( child.child_id )
+      children                                                  = ProductRelation.find(:all, :conditions => [ "parent_id = #{@product.entity_id}" ], :select => "child_id" )
+      @product.children                                      = Array.new 
+      children.each do |child|
+        @product.children.push( child.child_id )
       end
       configurable_attributes                                   = ProductConfigurableAttribute.find(:all, :conditions => ["product_id = #{@product.entity_id}"], :select => "attribute_id"  )
-      @product['configurable_attributes']                       = Array.new
+      @product.configurable_attributes                          = Array.new
       configurable_attributes.each do |configurable_attribute|
-        @product['configurable_attributes'].push( configurable_attribute.attribute_id )
+        @product.configurable_attributes.push( configurable_attribute.attribute_id )
       end 
     end 
-    
+
     @init_new_product_js                                        = true 
   end
 

@@ -2,6 +2,7 @@
 #author cway 2013-07-09
 
 class Product < ActiveRecord::Base
+  attr_accessor :configurable_attributes, :children
   #attr_accessible :attribute_set_id, :entity_type_id, :type_id, :sku, :has_options, :required_options
   #attr_writer :price, :qty, :name
 
@@ -15,10 +16,10 @@ class Product < ActiveRecord::Base
   self.table_name = "product_entity"
 
   def  self.get_index_attributes
-    name                           = EavAttribute.get_attribute( {attribute_code: 'name', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
-    sku                            = EavAttribute.get_attribute( {attribute_code: 'sku', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
-    price                          = EavAttribute.get_attribute( {attribute_code: 'price', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
-    qty                            = EavAttribute.get_attribute( {attribute_code: 'qty', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
+    name                          = EavAttribute.get_attribute( {attribute_code: 'name', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
+    sku                           = EavAttribute.get_attribute( {attribute_code: 'sku', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
+    price                         = EavAttribute.get_attribute( {attribute_code: 'price', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
+    qty                           = EavAttribute.get_attribute( {attribute_code: 'qty', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
 
 
     name_values                   = self.all_attribute_values( name )
@@ -30,15 +31,16 @@ class Product < ActiveRecord::Base
   end
 
   def self.get_flashsales_attributes( ids )
-    name                          = self.find_by_sql("select * from eav_attribute where `attribute_code` = 'name' and `entity_type_id` = #{ApplicationController::PRODUCT_TYPE_ID} limit 1")#get_attribute(  'name', product_type_id )
-    sku                           = self.find_by_sql("select * from eav_attribute where `attribute_code` = 'sku' and `entity_type_id` = #{ApplicationController::PRODUCT_TYPE_ID} limit 1")
-    price                         = self.find_by_sql("select * from eav_attribute where `attribute_code` = 'price' and `entity_type_id` = #{ApplicationController::PRODUCT_TYPE_ID} limit 1")
-    qty                           = self.find_by_sql("select * from eav_attribute where `attribute_code` = 'qty' and `entity_type_id` = #{ApplicationController::PRODUCT_TYPE_ID} limit 1")
+    name                          = EavAttribute.get_attribute( {attribute_code: 'name', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
+    sku                           = EavAttribute.get_attribute( {attribute_code: 'sku', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
+    price                         = EavAttribute.get_attribute( {attribute_code: 'price', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
+    qty                           = EavAttribute.get_attribute( {attribute_code: 'qty', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
+
   
-    name_values                   = self.get_products_attribute_values( name[0], ids)
-    sku_values                    = self.get_products_attribute_values( sku[0], ids)
-    price_values                  = self.get_products_attribute_values( price[0], ids)
-    qty_values                    = self.get_products_attribute_values( qty[0], ids)
+    name_values                   = self.get_products_attribute_values( name, ids)
+    sku_values                    = self.get_products_attribute_values( sku, ids)
+    price_values                  = self.get_products_attribute_values( price, ids)
+    qty_values                    = self.get_products_attribute_values( qty, ids)
 
     children                      = Hash.new
     name_values.each do | entity_id, name |
