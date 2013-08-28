@@ -28,8 +28,8 @@ class EavAttribute < ActiveRecord::Base
   	verify_params params[:attribute], 'frontend_input'
   	verify_params params, 'options'
 
-  	 EavAttribute.transaction do
-        attribute                                =   EavAttribute.find(params[:id])
+  	 self.transaction do
+        attribute                                =   self.find(params[:id])
         attribute.update_attributes( params[:attribute]  )
         if params[:attribute][:frontend_input]   == "select" or params[:attribute][:frontend_input] == "multiselect"
           options                                = params[:options]
