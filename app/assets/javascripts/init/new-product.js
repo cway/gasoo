@@ -317,7 +317,7 @@ $(function () {
     {
       return ;
     }
-    $("#exists_products_tbody").append("<tr><td colspan=5 class='center'><div class='input-prepend input-append'><img src=\"/assets/img/ajax-loaders/ajax-loader-5.gif\" title=\"img/ajax-loaders/ajax-loader-5.gif\" ></div></td></tr>");
+    $("#exists_products_tbody").append("<tr><td colspan=5 class='center'><div class='input-prepend input-append'><img src=\"/assets/ajax-loaders/ajax-loader-5.gif\" title=\"img/ajax-loaders/ajax-loader-5.gif\" ></div></td></tr>");
     $.ajax({
              type: "GET",
              url:  "/products/get_simple_products",
