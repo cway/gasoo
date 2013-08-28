@@ -40,4 +40,10 @@ class EavAttribute < ActiveRecord::Base
      self
   end 
 
+  def verify_params( params, key )
+    unless params.has_key? key
+  		raise ArgumentError, "no params named #{key}" 
+  	end
+  end
+  
 end
