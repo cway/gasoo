@@ -27,22 +27,22 @@ class ProductsController < ApplicationController
   #get /get_simple_products/
   def get_simple_products
      attribute_set_id            = params[:set].to_i
-     type_id                     = 3
+     type_id                     = ApplicationController::SIMPLE_PRODUCT_ID
      conditions                  = { :attribute_set_id => attribute_set_id, :type_id => type_id }
-     @products                   = Product.where( conditions ).select("entity_id")
-     ids 	                 = Array.new
-     @products.each do |product|
+     products                    = Product.where( conditions ).select("entity_id")
+     ids 	                       = Array.new
+     products.each do |product|
        ids.push( product.entity_id )
      end
 
      attribute_values            = Product.get_simple_products_attributes( ids )
-     @products.each_with_index do |product, index|
-       @products[index]["name"]  = attribute_values[:name][product.entity_id]
-       @products[index]["sku"]   = attribute_values[:sku][product.entity_id]
-       @products[index]["price"] = attribute_values[:price][product.entity_id]
-       @products[index]["qty"]   = attribute_values[:qty][product.entity_id]
+     products.each_with_index do |product, index|
+       products[index]["name"]   = attribute_values[:name][product.entity_id]
+       products[index]["sku"]    = attribute_values[:sku][product.entity_id]
+       products[index]["price"]  = attribute_values[:price][product.entity_id]
+       products[index]["qty"]    = attribute_values[:qty][product.entity_id]
      end
-     render :json                => @products
+     render :json               => products
   end
 
     
@@ -50,64 +50,7 @@ class ProductsController < ApplicationController
   def new
     
     if ( params.has_key? 'type' and params.has_key? 'set' )
-      configurable_product_type        = ApplicationController::CONFIGURABLE_PRODUCT_ID  
-      attribute_set_id                 = params[:set].to_i
-      type_id                          = params[:type].to_i
-
-      if type_id == ApplicationController::CONFIGURABLE_PRODUCT_ID and (params.has_key? 'continue') == false
-        configurable_attributes        = Product.get_attributes_by_frontend_input(ApplicationController::PRODUCT_TYPE_ID, attribute_set_id, "select");
-        unless configurable_attributes.empty? 
-          render( "chose_configurable_attribute", :locals => {:configurable_attributes => configurable_attributes, :type => type_id, :set => attribute_set_id} )
-          return
-        else
-          type_id                      = ApplicationController::SIMPLE_PRODUCT_ID
-        end
-      end
-      
-      @product                         = Product.new
-      @product["attribute_set_id"]     = attribute_set_id
-      @product["type_id"]              = type_id
-      @product["entity_type_id"]       = ApplicationController::PRODUCT_TYPE_ID
-
-      if @product["type_id"] == ApplicationController::CONFIGURABLE_PRODUCT_ID
-        if params[:configurable_attributes]
-          @product["configurable_attributes"] = params[:configurable_attributes]
-          @product["configurable_attributes"].each_with_index do | attribute_id, index |
-            @product["configurable_attributes"][index] = attribute_id.to_i
-          end
-          @product["required_options"] = 1
-          @product["has_options"]      = 1
-        else
-          @product["type_id"]          = ApplicationController::SIMPLE_PRODUCT_ID
-        end
-      end
-
-      attribute_list                   = Product.get_attributes( ApplicationController::PRODUCT_TYPE_ID, attribute_set_id)
-      @group_list                      = Hash.new
-      group_count                      = 0
-      
-      attribute_list.each do |attribute|
-        unless @group_list.has_key? attribute.attribute_group_id
-          @group_list[attribute.attribute_group_id]               = Hash.new 
-          @group_list[attribute.attribute_group_id]["sort"]       = group_count
-          @group_list[attribute.attribute_group_id]["group_name"] = attribute.attribute_group_name
-          @group_list[attribute.attribute_group_id]["group_id"]   = attribute.attribute_group_id
-          @group_list[attribute.attribute_group_id]["attributes"] = Array.new
-          group_count += 1
-        end
-        
-        if attribute.frontend_input == "select" or attribute.frontend_input == "multiselect"
-
-          attribute["options"]                                    = AttributeOption.find_all_by_attribute_id( attribute.attribute_id )
-        end
-      
-        attribute.attribute_group_name = nil
-        @group_list[attribute.attribute_group_id]["attributes"].push( attribute )
-      end
-      
-      #init_new_product_js => true load init/new_product.js
-      @init_new_product_js             = true 
-      render( "new" )
+      real_new params
     else
       @attribute_sets                  =  AttributeSet.find_all_by_entity_type_id( ApplicationController::PRODUCT_TYPE_ID )
       @product_types                   =  ProductType.find_all_by_active( ApplicationController::ACTIVE )
@@ -115,19 +58,54 @@ class ProductsController < ApplicationController
     end 
   end
 
-
-  def fast_new
+  def real_new( params )
+    configurable_product_type          = ApplicationController::CONFIGURABLE_PRODUCT_ID  
     attribute_set_id                   = params[:set].to_i
-    type_id                            = ApplicationController::SIMPLE_PRODUCT_ID
+    type_id                            = params[:type].to_i
 
-    @product                           = Product.new
-    @product["attribute_set_id"]       = attribute_set_id
-    @product["type_id"]                = type_id
-    @product["entity_type_id"]         = ApplicationController::PRODUCT_TYPE_ID
+    if type_id == ApplicationController::CONFIGURABLE_PRODUCT_ID and (params.has_key? 'continue') == false
+      configurable_attributes          = Product.get_attributes_by_frontend_input(ApplicationController::PRODUCT_TYPE_ID, attribute_set_id, "select");
+      unless configurable_attributes.empty? 
+        render( "chose_configurable_attribute", :locals => {:configurable_attributes => configurable_attributes, :type => type_id, :set => attribute_set_id} )
+        return
+      else
+        type_id                      = ApplicationController::SIMPLE_PRODUCT_ID
+      end
+    end
     
-    attribute_list                     = Product.get_attributes( ApplicationController::PRODUCT_TYPE_ID, attribute_set_id)
-    @group_list                        = Hash.new
-    group_count                        = 0
+    @product                         = Product.new
+    init_product_params( attribute_set_id, type_id, params )
+
+    @group_list                      = Hash.new
+    init_product_group_list( attribute_set_id )
+ 
+    #init_new_product_js => true load init/new_product.js
+    @init_new_product_js             = true 
+    render( "new" )
+  end
+
+  def init_product_params( attribute_set_id, type_id, params )
+    @product["attribute_set_id"]     = attribute_set_id
+    @product["type_id"]              = type_id
+    @product["entity_type_id"]       = ApplicationController::PRODUCT_TYPE_ID
+
+    if @product["type_id"] == ApplicationController::CONFIGURABLE_PRODUCT_ID
+      if params[:configurable_attributes]
+        @product["configurable_attributes"]          = params[:configurable_attributes]
+        @product["configurable_attributes"].each_with_index do | attribute_id, index |
+          @product["configurable_attributes"][index] = attribute_id.to_i
+        end
+        @product["required_options"] = 1
+        @product["has_options"]      = 1
+      else
+        @product["type_id"]          = ApplicationController::SIMPLE_PRODUCT_ID
+      end
+    end
+  end
+
+  def init_product_group_list( attribute_set_id )
+    attribute_list                   = Product.get_attributes( ApplicationController::PRODUCT_TYPE_ID, attribute_set_id)
+    group_count                      = 0
     
     attribute_list.each do |attribute|
       unless @group_list.has_key? attribute.attribute_group_id
@@ -140,13 +118,30 @@ class ProductsController < ApplicationController
       end
       
       if attribute.frontend_input == "select" or attribute.frontend_input == "multiselect"
-
         attribute["options"]                                    = AttributeOption.find_all_by_attribute_id( attribute.attribute_id )
       end
     
-      attribute.attribute_group_name   = nil
+      #attribute.attribute_group_name = nil
+      #@group_list[attribute.attribute_group_id]["attributes"].push( attribute )
+      attribute.attribute_group_name                            = nil
+      attribute["value"]                                        = Product.get_product_attribute_value( params[:id], attribute )
       @group_list[attribute.attribute_group_id]["attributes"].push( attribute )
+      unless attribute["value"] == ""
+        @product[attribute.attribute_code]                      = attribute["value"]
+      end
     end
+  end
+
+  def fast_new
+    attribute_set_id                   = params[:set].to_i
+    type_id                            = ApplicationController::SIMPLE_PRODUCT_ID
+
+    @product                           = Product.new 
+    init_product_params( attribute_set_id, type_id, params )
+
+    @group_list                        = Hash.new
+    init_product_group_list( attribute_set_id )
+    
     
     #init_new_product_js => true load init/new_product.js
     @init_new_product_js               = true 
@@ -157,34 +152,10 @@ class ProductsController < ApplicationController
 
   # GET /products/1/edit
   def edit
-    @product                           = Product.find(params[:id])
-    attribute_list                     = Product.get_attributes( ApplicationController::PRODUCT_TYPE_ID, @product.attribute_set_id)
+    @product                                                    = Product.find(params[:id])
 
-    @group_list                        = Hash.new
-    group_count                        = 0
-
-    attribute_list.each do |attribute|
-      unless @group_list.has_key? attribute.attribute_group_id
-        @group_list[attribute.attribute_group_id]               = Hash.new
-        @group_list[attribute.attribute_group_id]["sort"]       = group_count
-        @group_list[attribute.attribute_group_id]["group_name"] = attribute.attribute_group_name
-        @group_list[attribute.attribute_group_id]["group_id"]   = attribute.attribute_group_id
-        @group_list[attribute.attribute_group_id]["attributes"] = Array.new
-        group_count += 1
-      end
-
-      if attribute.frontend_input == "select" or attribute.frontend_input == "multiselect"
-
-        attribute["options"]                                    = AttributeOption.find_all_by_attribute_id( attribute.attribute_id )
-      end
-
-      attribute.attribute_group_name                            = nil
-      attribute["value"]                                        = Product.get_product_attribute_value( params[:id], attribute )
-      @group_list[attribute.attribute_group_id]["attributes"].push( attribute )
-      unless attribute["value"] == ""
-        @product[attribute.attribute_code]                      = attribute["value"]
-      end
-    end 
+    @group_list                                                 = Hash.new
+    init_product_group_list( @product.attribute_set_id )
 
     if @product.type_id.to_i == ApplicationController::CONFIGURABLE_PRODUCT_ID
       childs                                                    = ProductRelation.find(:all, :conditions => [ "parent_id = #{@product.entity_id}" ], :select => "child_id" )
@@ -197,8 +168,8 @@ class ProductsController < ApplicationController
       configurable_attributes.each do |configurable_attribute|
         @product['configurable_attributes'].push( configurable_attribute.attribute_id )
       end 
-    end
-    puts @product.to_json
+    end 
+    
     @init_new_product_js                                        = true 
   end
 

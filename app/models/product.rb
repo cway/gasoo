@@ -54,15 +54,15 @@ class Product < ActiveRecord::Base
   end
 
   def self.get_simple_products_attributes( ids )
-    name                          = self.find_by_sql("select * from eav_attribute where `attribute_code` = 'name' and `entity_type_id` = #{ApplicationController::PRODUCT_TYPE_ID} limit 1")#get_attribute(  'name', product_type_id )
-    sku                           = self.find_by_sql("select * from eav_attribute where `attribute_code` = 'sku' and `entity_type_id` = #{ApplicationController::PRODUCT_TYPE_ID} limit 1")
-    price                         = self.find_by_sql("select * from eav_attribute where `attribute_code` = 'price' and `entity_type_id` = #{ApplicationController::PRODUCT_TYPE_ID} limit 1")
-    qty                           = self.find_by_sql("select * from eav_attribute where `attribute_code` = 'qty' and `entity_type_id` = #{ApplicationController::PRODUCT_TYPE_ID} limit 1")
+    name                           = EavAttribute.get_attribute( {attribute_code: 'name', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
+    sku                            = EavAttribute.get_attribute( {attribute_code: 'sku', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
+    price                          = EavAttribute.get_attribute( {attribute_code: 'price', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
+    qty                            = EavAttribute.get_attribute( {attribute_code: 'qty', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
 
-    name_values                   = self.get_products_attribute_values( name[0], ids )
-    sku_values                    = self.get_products_attribute_values( sku[0], ids )
-    price_values                  = self.get_products_attribute_values( price[0], ids )
-    qty_values                    = self.get_products_attribute_values( qty[0], ids )
+    name_values                   = self.get_products_attribute_values( name,  ids )
+    sku_values                    = self.get_products_attribute_values( sku,   ids )
+    price_values                  = self.get_products_attribute_values( price, ids )
+    qty_values                    = self.get_products_attribute_values( qty,   ids )
 
     return { :name => name_values, :sku => sku_values, :price => price_values, :qty => qty_values }
   end
@@ -85,7 +85,7 @@ class Product < ActiveRecord::Base
     if attribute_entity
       value                       = attribute_entity['value']
     end
-    return value
+    value
   end
  
   def self.get_product_names
@@ -119,7 +119,7 @@ class Product < ActiveRecord::Base
   end
   
   def self.get_products_attribute_values( attribute, ids )
-    conditions			  = Hash.new
+    conditions			              = Hash.new
     conditions[:attribute_id]     = attribute.attribute_id
     conditions[:entity_id]        = ids
 
