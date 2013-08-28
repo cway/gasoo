@@ -15,6 +15,10 @@ class Product < ActiveRecord::Base
 
   self.table_name = "product_entity"
 
+  def self.to_json
+    super.to_json( :methods => [:product_attributes] )
+  end
+
   def  self.get_index_attributes
     name                          = EavAttribute.get_attribute( {attribute_code: 'name', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
     sku                           = EavAttribute.get_attribute( {attribute_code: 'sku', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
