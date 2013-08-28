@@ -50,7 +50,7 @@ class AttributesController < ApplicationController
         @attribute                            =   EavAttribute.update_eav_attribute( params ) 
         redirect_to @attribute, :notice => '修改属性成功'
     rescue => err
-      puts err。backtrace
+      puts err.backtrace
       redirect_to :action => "edit", :id => params[:id]
     end
   end
