@@ -1,0 +1,98 @@
+<form accept-charset="UTF-8" action="/attributes/<%= @attribute.attribute_id %>" class="form-horizontal" id="edit_attribute" method="post">
+<% if @attribute.errors.any? %>
+	<div class="alert alert-error">
+		<button type="button" class="close" data-dismiss="alert">×</button>
+		<strong><%= pluralize(@attribute.errors.count, "error") %></strong> 
+		<ul>
+		   <% @attribute.errors.full_messages.each do |msg| %>
+		      <li><%= msg %></li>
+		   <% end %>
+		</ul>
+	</div>
+<% end %>
+<fieldset>
+<input name="_method" type="hidden" value="put" />
+<input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
+<div class="control-group">
+	<label class="control-label" for="attribute_code">属性名称<span class="icon icon-red icon-star-on"></span></label>
+	<div class="controls">
+	  <input type="text" name="attribute[attribute_code]" class = "input-xlarge focused" id = "attribute_code" value="<%= @attribute.attribute_code %>" />
+	  <p class="help-block"><span class="icon-triangle-n"></span>后台内部使用,必须唯一,没有空格,小于30个字符!</p>
+	</div>
+</div>
+<div class="control-group">
+	<label class="control-label" for="select-entity-type">属性类别</label>
+	<div class="controls">
+	  <select id="select-entity-type" name="attribute[entity_type_id]" data-rel="chosen">
+		<% @entity_types.each do |entity_type| %>
+		<option <% if @attribute.entity_type_id == entity_type.entity_type_id %>  selected=selected <% end %> value="<%= entity_type.entity_type_id %>"><%= entity_type.entity_type_code %></option>
+		<% end %>
+	  </select>
+	</div>
+</div>
+<div class="control-group">
+	<label class="control-label" for="frontend_label">编辑输入标签</label>
+	<div class="controls">
+	  <input type="text" name="attribute[frontend_label]" class = "input-xlarge" id = "frontend_label" value="<%= @attribute.frontend_label %>" />
+	</div>
+</div>
+<div class="control-group">
+	<label class="control-label" for="select-frontend-input">编辑输入类型</label>
+	<div class="controls">
+	  <select id="select-frontend-input" name="attribute[frontend_input]" data-rel="chosen">
+	  	<% ApplicationController::ATTRIBUTE_INPUT_TYPE.each do |option_value, option_name| %>
+		  <option <% if @attribute.frontend_input == option_value %> selected=selected <% end %> value="<%= option_value %>"><%= option_name %></option> 
+		<% end %>
+	  </select>
+	</div>
+</div>
+<div class="control-group hide" id="options-group" >
+	<label class="control-label" for="select-backend-type">选项</label>
+	<div class="controls" id="options-control">
+      <div class="input-append"><input id="select-option" name="options[]" size="6" type="text" /><button class="btn" id="add-option" type="button">添加选项</button>
+      </div>
+	</div>
+</div>
+<div class="control-group">
+	<label class="control-label" for="select-backend-type">数据类型</label>
+	<div class="controls">
+	  <select id="select-backend-type" name="attribute[backend_type]" data-rel="chosen">
+		<% ApplicationController::ATTRIBUTE_BACKEND_TYPE.each do |option_value, option_name| %>
+		  <option <% if @attribute.backend_type == option_value %> selected=selected <% end %> value="<%= option_value %>"><%= option_name %></option> 
+		<% end %>
+	  </select>
+	</div>
+</div>
+<div class="control-group">
+	<label class="control-label" for="default_value">默认值</label>
+	<div class="controls">
+	  <input type="text" name="attribute[default_value]" class = "input-xlarge" id = "default_value" value="<%= @attribute.default_value %>" />
+	</div>
+</div>
+<div class="control-group">
+	<label class="control-label" for="select-is-unique">唯一<span class="icon icon-red icon-star-on"></span></label>
+	<div class="controls">
+	 <select id="select-is-unique" name="attribute[is_unique]">
+		 <% ApplicationController::YES_NO_OPTION.each do |option_value, option_name| %>
+			<option <% if @attribute.is_unique == option_value %> selected=selected <% end %> value="<%= option_value %>"><%= option_name %></option>
+		<% end %>
+	  </select>
+	  <p class="help-block"><span class="icon-triangle-n"></span>不与其他产品共享此属性!</p>
+	</div>
+</div>
+<div class="control-group">
+	<label class="control-label" for="select-is-required">是否为必要属性</label>
+	<div class="controls">
+	  <select id="select-is-required" name="attribute[is_required]">
+	  	<% ApplicationController::YES_NO_OPTION.each do |option_value, option_name| %>
+			<option <% if @attribute.is_required == option_value %> selected=selected <% end %> value="<%= option_value %>"><%= option_name %></option>
+		<% end %>
+	  </select>
+	</div>
+</div>
+<div class="form-actions">
+  <input type="submit" class="btn btn-primary" value="更新" />
+  <input type="reset" class="btn" value="重置" />
+</div>
+</fieldset>
+</form>
