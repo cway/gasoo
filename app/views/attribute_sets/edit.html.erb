@@ -1,0 +1,68 @@
+<%= render 'layouts/topbar' %>
+	<div class="container-fluid">
+	<div class="row-fluid">
+
+		<%= render 'layouts/leftmenu' %>
+
+		<%= render 'layouts/noscript_warning' %>
+		
+		<div id="content" class="span10">
+		<!-- content starts -->
+		
+
+		<div>
+			<ul class="breadcrumb">
+				<li>
+					<a href="/main">主页</a> <span class="divider">/</span>
+				</li>
+				<li>
+					<a href="#">编辑属性集</a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="row-fluid sortable">
+			<div class="box span12">
+				<div class="box-header well" data-original-title>
+					<h2><i class="icon-picture"></i>编辑属性集</h2>
+					<div class="box-icon">
+						<a href="#" class="btn btn-setting btn-round"><i class="icon-cog"></i></a>
+						<a href="#" class="btn btn-minimize btn-round"><i class="icon-chevron-up"></i></a>
+						<a href="#" class="btn btn-close btn-round"><i class="icon-remove"></i></a>
+					</div>
+				</div>
+				<div class="box-content">
+					<%= render 'form' %>
+				        <%= link_to '返回', attributes_path %>	
+				</div>
+			</div><!--/span-->
+		
+		</div><!--/row-->
+
+
+				<!-- content ends -->
+		</div><!--/#content.span10-->
+			</div><!--/fluid-row-->
+			
+	<hr>
+
+	<div class="modal hide fade" id="myModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">×</button>
+			<h3>设置</h3>
+		</div>
+		<div class="modal-body">
+			<p>可配置属性</p>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal">关闭</a>
+			<a href="#" class="btn btn-primary">保存修改</a>
+		</div>
+	</div>
+
+    <%= render 'layouts/footer' %> 
+    <script language="javascript">
+      var SET_ID         = <%= @attribute_set.attribute_set_id %>;
+      var ENTITY_TYPE_ID = <%= @attribute_set.entity_type_id %>;
+    </script>	
+</div><!--/.fluid-container-->

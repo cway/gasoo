@@ -1,0 +1,109 @@
+<%= render 'layouts/topbar' %>
+
+	<div class="container-fluid">
+	<div class="row-fluid">
+
+		<%= render 'layouts/leftmenu' %>
+
+		<%= render 'layouts/noscript_warning' %>
+		
+		<div id="content" class="span10">
+		<!-- content starts -->
+		
+
+		<div>
+			<ul class="breadcrumb">
+				<li>
+					<a href="/main">主页</a> <span class="divider">/</span>
+				</li>
+				<li>
+					<a href="#">添加属性集</a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="row-fluid sortable">
+			<div class="box span12">
+				<div class="box-header well" data-original-title>
+					<h2><i class="icon-picture"></i>添加属性集</h2>
+					<div class="box-icon">
+						<a href="#" class="btn btn-setting btn-round"><i class="icon-cog"></i></a>
+						<a href="#" class="btn btn-minimize btn-round"><i class="icon-chevron-up"></i></a>
+						<a href="#" class="btn btn-close btn-round"><i class="icon-remove"></i></a>
+					</div>
+				</div>
+				<div class="box-content">	
+					<form accept-charset="UTF-8" action="/attribute_sets" class="form-horizontal" id="new_attribute_set" method="post">
+					<% if @attribute_set.errors.any? %>
+						<div class="alert alert-error">
+							<button type="button" class="close" data-dismiss="alert">×</button>
+							<strong><%= pluralize(@attribute_set.errors.count, "error") %></strong> 
+							<ul>
+							   <% @attribute_set.errors.full_messages.each do |msg| %>
+							      <li><%= msg %></li>
+							   <% end %>
+							</ul>
+						</div>
+					<% end %>
+					<fieldset>
+						<input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
+						<div class="control-group">
+							<label class="control-label" for="attribute_set_name">属性集名称<span class="icon icon-red icon-star-on"></span></label>
+							<div class="controls">
+							  <input type="text" name="attribute_set[attribute_set_name]" class = "input-xlarge focused" id = "attribute_set_name" />
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="select-entity-type">属性类别</label>
+							<div class="controls">
+							  <select id="select-entity-type" name="attribute_set[entity_type_id]" data-rel="chosen">
+								<option value="<%= @entity_type.entity_type_id %>"><%= @entity_type.entity_type_code %></option>
+							  </select>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="select-parent-set">继承于:</label>
+							<div class="controls">
+							  <select id="select-parent-set" name="attribute_set[parent_set_id]" data-rel="chosen">
+								<% @attribute_sets.each do |attribute_set| %>
+								<option value="<%= attribute_set.attribute_set_id %>"><%= attribute_set.attribute_set_name %></option>
+								<% end %>
+							  </select>
+							</div>
+						</div>
+					        <div class="form-actions">
+                               <input type="submit" class="btn btn-primary" value="添加" />
+                               <input type="reset" class="btn" value="重置" />
+                            </div>
+					</fieldset>
+					</form>
+				    <%= link_to '返回', attribute_sets_path %>	
+				</div>
+			</div><!--/span-->
+		
+		</div><!--/row-->
+
+
+				<!-- content ends -->
+		</div><!--/#content.span10-->
+			</div><!--/fluid-row-->
+			
+	<hr>
+
+	<div class="modal hide fade" id="myModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">×</button>
+			<h3>设置</h3>
+		</div>
+		<div class="modal-body">
+			<p>可配置属性</p>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal">关闭</a>
+			<a href="#" class="btn btn-primary">保存修改</a>
+		</div>
+	</div>
+
+    <%= render 'layouts/footer' %>
+	
+</div><!--/.fluid-container-->
