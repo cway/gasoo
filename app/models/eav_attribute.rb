@@ -5,6 +5,14 @@ class EavAttribute < ActiveRecord::Base
   self.table_name                              = "eav_attribute"
   validates :attribute_code, :entity_type_id, :presence => true
 
+  def self.get_attribute( conditions )
+    attribute                                  = self.where( conditions ).first
+    unless attribute
+      raise "不存在该属性: " + conditions.to_json
+    end
+    attribute
+  end
+
   def self.create_eav_attribute( params )
     verify_params params, 'attribute'
     verify_params params[:attribute], 'frontend_input'

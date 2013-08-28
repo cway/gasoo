@@ -1,0 +1,44 @@
+<form accept-charset="UTF-8" action="/products" class="form-horizontal" id="new_product" method="post">
+<% if @product.errors.any? %>
+	<div class="alert alert-error">
+		<button type="button" class="close" data-dismiss="alert">×</button>
+		<strong><%= pluralize(@product.errors.count, "error") %></strong> 
+		<ul>
+		   <% @product.errors.full_messages.each do |msg| %>
+		      <li><%= msg %></li>
+		   <% end %>
+		</ul>
+	</div>
+<% end %>
+<fieldset>
+<input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
+<input name="attribute_set_id" type="hidden" value="<%= @product['attribute_set_id'] %>" />
+<input name="categories" id="categories"  type="hidden" />
+<input name="type_id" id="type_id"  type="hidden" value="<%= @product['type_id'] %>" />
+<input name="body" id="body" type="hidden" />
+<ul class="nav nav-tabs" id="myTab">
+	<% @group_list.each do |group_id, group| %>
+	  <li<% if group['sort'] == 0 %> class="active" <% end %>><a href="#group_<%= group['group_id'] %>"><%= group['group_name'] %></a></li>
+    <% end %>
+	<li><a href="#categories_tab">类目</a></li>
+        <%= raw configurable_tab_title( @product ) %>
+</ul>
+ 
+<div id="myTabContent" class="tab-content">
+	<% @group_list.each do |group_id, group| %>
+	  <div class="tab-pane <% if group['sort'] == 0 %>active<% end %>" id="group_<%= group['group_id'] %>">
+		<% group['attributes'].each do |attribute| %>
+	           <%= raw get_attribute_input( attribute, @product ) %>
+		<% end %>
+	  </div>
+       <% end %>
+	<div class="tab-pane" id="categories_tab">
+           <div class="box-content" id="categories_tree"></div>
+       </div>
+       <%= raw configurable_tab_content( @product ) %>
+<div class="form-actions">
+  <input type="button" id="btn-submit-product" class="btn btn-primary" value="添加" />
+  <input type="reset" class="btn" value="重置" />
+</div>
+</fieldset>
+</form>

@@ -3,6 +3,7 @@ EcAdmin::Application.routes.draw do
   resources  :main
   resources  :attributes
   resources  :attribute_sets
+  resources  :products
   get  'attribute_groups/get_attributes'   => 'attribute_groups#get_attributes'
   root :to => 'main#index'
   # The priority is based upon order of creation: first created -> highest priority.

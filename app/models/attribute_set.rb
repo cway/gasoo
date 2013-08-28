@@ -27,15 +27,15 @@ class AttributeSet < ActiveRecord::Base
     verify_params params[:attribute_set], 'entity_type_id'
     verify_params params[:attribute_set], 'attribute_set_name'
      
-    attribute_set_params        = {
-                                    :entity_type_id        => params[:attribute_set][:entity_type_id],
-                                    :attribute_set_name    => params[:attribute_set][:attribute_set_name]
-                                  }
+    attribute_set_params           = {
+                                       :entity_type_id        => params[:attribute_set][:entity_type_id],
+                                       :attribute_set_name    => params[:attribute_set][:attribute_set_name]
+                                     }
    
-    attribute_set               = self.new( attribute_set_params )
+    attribute_set                  = self.new( attribute_set_params )
     self.transaction do
       if attribute_set.save
-        parent_group_attributes   = EntityAttribute.where( attribute_set_id: params[:attribute_set][:parent_set_id] )    
+        parent_group_attributes    = EntityAttribute.where( attribute_set_id: params[:attribute_set][:parent_set_id] )    
         EntityAttribute.clone_parent_attributes( attribute_set, parent_group_attributes )
       else 
         raise "创建属性集失败"

@@ -1,0 +1,78 @@
+<form accept-charset="UTF-8" action="/products/<%= @product.entity_id %>" class="form-horizontal" id="edit_product" method="post">
+<% if @product.errors.any? %>
+	<div class="alert alert-error">
+		<button type="button" class="close" data-dismiss="alert">×</button>
+		<strong><%= pluralize(@product.errors.count, "error") %></strong> 
+		<ul>
+		   <% @product.errors.full_messages.each do |msg| %>
+		      <li><%= msg %></li>
+		   <% end %>
+		</ul>
+	</div>
+<% end %>
+<fieldset>
+<input name="_method" type="hidden" value="put" />
+<input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
+<input name="attribute_set_id" type="hidden" value="<%= @product.attribute_set_id %>" />
+<input name="categories" id="categories"  type="hidden" />
+<input name="type_id" id="type_id"  type="hidden" value="<%= @product.type_id %>" />
+<input name="body" id="body" type="hidden" />
+<ul class="nav nav-tabs" id="myTab">
+	<% @group_list.each do |group_id, group| %>
+	  <li<% if group['sort'] == 0 %> class="active" <% end %>><a href="#group_<%= group['group_id'] %>"><%= group['group_name'] %></a></li>
+    <% end %>
+	<li><a href="#categories_tab">类目</a></li>
+        <%= raw configurable_tab_title( @product ) %>
+</ul>
+ 
+<div id="myTabContent" class="tab-content">
+	<% @group_list.each do |group_id, group| %>
+	  <div class="tab-pane <% if group['sort'] == 0 %>active<% end %>" id="group_<%= group['group_id'] %>">
+		<% group['attributes'].each do |attribute| %>
+			<div class="control-group">
+				<label class="control-label" for="<%= attribute.attribute_code %>"><%= attribute.frontend_label %></label>
+				<div class="controls">
+				  <% case attribute.frontend_input %>
+				    <% when "text" %>
+				  		<input type="text" name="attributes[<%= attribute.attribute_code %>]" class = "input-xlarge attribute_value" id = "<%= attribute.attribute_code %>" value = "<%= attribute.value %>" />
+				    <% when "select" %>
+						 <select id="<%= attribute.attribute_code %>" class="attribute_value" name="attributes[<%= attribute.attribute_code %>]" data-rel="chosen">
+                                                   <% attribute.options.each do |option| %>
+							<option value="<%= option.option_id %>"  <% if attribute.value == option.option_id %> selected= selected <% end %>   ><%= option.value %></option> 
+                                                   <% end %>    
+						  </select>
+					<% when "textarea" %>
+						 <textarea class="cleditor attribute_value" name="attributes[<%= attribute.attribute_code %>]" id="<%= attribute.attribute_code %>" rows="3"><%= attribute.value %></textarea>
+					<% when "price" %>
+						 <div class="input-prepend input-append">
+							<span class="add-on">￥</span><input name="attributes[<%= attribute.attribute_code %>]" class="attribute_value" id="<%= attribute.attribute_code %>" value="<%= attribute.value %>" size="16" type="text" >
+					     </div>
+					<% when "image" %>
+                                           <button id="image-management" class="btn btn-large btn-primary btn-round">选择图片</button>
+                                             <table class="table table-striped">
+                                                          <thead>
+                                                                  <tr>
+                                                                          <th>缩略图</th>
+                                                                          <th>图片地址</th>
+                                                                          <th></th>
+                                                                  </tr>
+                                                          </thead>
+                                                          <tbody id="product_images_tbody">
+                                                          </tbody>
+                                            </table>
+				 <% end %>
+				</div>
+			</div>
+		<% end %>
+	  </div>
+    <% end %>
+	<div class="tab-pane" id="categories_tab">
+          <div class="box-content" id="categories_tree"></div>
+       </div>
+       <%= raw configurable_tab_content( @product ) %>
+<div class="form-actions">
+  <input type="button" id="btn-submit-edit-product" class="btn btn-primary" value="更新" />
+  <input type="reset" class="btn" value="重置" />
+</div>
+</fieldset>
+</form>

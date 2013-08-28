@@ -1,0 +1,101 @@
+<%= render 'layouts/topbar' %>
+
+	<div class="container-fluid">
+	<div class="row-fluid">
+
+		<%= render 'layouts/leftmenu' %>
+
+		<%= render 'layouts/noscript_warning' %>
+		
+		<div id="content" class="span10">
+		<!-- content starts -->
+		
+
+		<div>
+			<ul class="breadcrumb">
+				<li>
+					<a href="/main">主页</a> <span class="divider">/</span>
+				</li>
+				<li>
+					<a href="#">商品列表</a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="row-fluid sortable">
+			<div class="box span12">
+				<div class="box-header well" data-original-title>
+					<h2><i class="icon-picture"></i>商品列表</h2>
+					<div class="box-icon">
+						<a href="#" class="btn btn-setting btn-round"><i class="icon-cog"></i></a>
+						<a href="#" class="btn btn-minimize btn-round"><i class="icon-chevron-up"></i></a>
+						<a href="#" class="btn btn-close btn-round"><i class="icon-remove"></i></a>
+					</div>
+				</div>
+				<div class="box-content">
+					  	<table class="table table-striped table-bordered bootstrap-datatable datatable">
+						  <thead>
+							  <tr>
+								  <th>产品id</th>
+								  <th>商品名称</th>
+								  <th>商品类型</th>
+								  <th>属性集</th>
+								  <th>价格</th>
+								  <th>剩余库存</th>
+							  	  <th>操作</th>
+							  </tr>
+						  </thead>   
+						  <tbody>
+							<% @products.each do |product| %>
+							<tr>
+								<td><%= product.entity_id %></td>
+								<td class="center"><%= attribute_values[:name][product.entity_id] %></td>
+								<td class="center"><%= product_types[product.type_id.to_i] %></td>
+								<td class="center"><%= attribute_sets[product.attribute_set_id] %></td>
+								<td class="center"><%= attribute_values[:price][product.entity_id] %></td>
+								<td class="center"><%= attribute_values[:qty][product.entity_id] %></td>
+								<td class="center">
+									<a class="btn btn-info" href="/products/<%= product.entity_id %>/edit">
+										<i class="icon-edit icon-white"></i>  
+										编辑                                            
+									</a>
+									<a class="btn btn-danger" href="/products/<%= product.entity_id %>" data-confirm="确认删除?" data-method="delete" rel="nofollow">
+										<i class="icon-trash icon-white"></i> 
+										删除
+									</a>
+								</td>
+							</tr>
+                                                        <% end %>
+						  </tbody>
+					  </table>
+					  <br />
+					  <%= link_to '<button type="button">添加商品</button>'.html_safe, new_product_path %>
+				</div>
+			</div><!--/span-->
+		
+		</div><!--/row-->
+
+
+				<!-- content ends -->
+		</div><!--/#content.span10-->
+			</div><!--/fluid-row-->
+			
+	<hr>
+
+	<div class="modal hide fade" id="myModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">×</button>
+			<h3>设置</h3>
+		</div>
+		<div class="modal-body">
+			<p>可配置属性</p>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal">关闭</a>
+			<a href="#" class="btn btn-primary">保存修改</a>
+		</div>
+	</div>
+
+    <%= render 'layouts/footer' %>
+	
+</div><!--/.fluid-container-->
