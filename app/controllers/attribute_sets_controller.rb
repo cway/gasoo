@@ -25,10 +25,10 @@ class AttributeSetsController < ApplicationController
       parent_group_attributes   = EntityAttribute.find_all_by_attribute_set_id( params[:attribute_set][:parent_set_id] )    
       res                       = EntityAttribute.clone_parent_attributes( @attribute_set, parent_group_attributes )
       @init_attribute_set_js    = true        
-      render :action => "edit", :notice => '属性集创建成功.'
+      redirect_to :action => "edit", :notice => '属性集创建成功.'
     else
       @entity_types             = EntityType.all
-      render :action => "new"
+      redirect_to :action => "new"
     end
   end
   
@@ -43,9 +43,9 @@ class AttributeSetsController < ApplicationController
   def update 
     attribute_set_id            =   params[:id]
     group_data                  =   params[:group_data]
-    group_list                  =   ActiveSupport::JSON.decode( group_data )
+    group_list                  =   JSON.parse group_data #ActiveSupport::JSON.decode( group_data )
     entity_type_id              =   params[:entity_type_id]
-    res                         =   EntityAttribute.delete_all(["entity_type_id = ? and attribute_set_id = ?", entity_type_id, attribute_set_id]) 
+    res                         =   EntityAttribute.where( { :entity_type_id => entity_type_id, :attribute_set_id => attribute_set_id } ).delete_all
     
     res                         =   EntityAttribute.insert_attributes( group_list, entity_type_id, attribute_set_id ) 
 
