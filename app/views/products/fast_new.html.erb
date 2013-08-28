@@ -60,5 +60,5 @@
 </div><!--/row-->
 <script type="text/javascript">
        var PRODUCT_ID                = 0;
-       var PRODUCT_ENTITY            = <%= raw @product.to_json %>;
+       var PRODUCT_ENTITY            = <%= raw @product.to_json( :methods => [:product_attributes, :children, :product_attributes] ) %>;
 </script>

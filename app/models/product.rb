@@ -13,11 +13,7 @@ class Product < ActiveRecord::Base
   #  :message => 'must be a URL for GIF, JPG or PNG image.'
   #}
 
-  self.table_name = "product_entity"
-
-  def self.to_json
-    super.to_json( :methods => [:product_attributes] )
-  end
+  self.table_name                 = "product_entity"
 
   def  self.get_index_attributes
     name                          = EavAttribute.get_attribute( {attribute_code: 'name', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
