@@ -19,11 +19,13 @@ class AttributeSetsController < ApplicationController
   # POST /attribute_sets/create
   def create  
     begin
-      AttributeSet.create_attribute_set( params ) 
+      attrubute_set             = AttributeSet.create_attribute_set( params ) 
       @init_attribute_set_js    = true        
-      redirect_to :action => "edit", :notice => '属性集创建成功.'
+      redirect_to :action => "edit", :id => attrubute_set, :notice => '属性集创建成功.'
+    rescue ActiveRecord::RecordNotUnique => err
+      redirect_to :action => "new", :notice => '该属性集已存在'
     rescue => err
-      redirect_to :action => "new", : notice => err.message
+      redirect_to :action => "new", :notice => err.message
     end
   end
   

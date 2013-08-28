@@ -7,7 +7,6 @@ class EntityAttribute < ActiveRecord::Base
   def self.clone_parent_attributes( attribute_set, parent_group_attributes )
     values        =  Array.new
     parent_group_attributes.each do |attribute|
-      
       entity_attribute = {
                            :entity_type_id     => attribute.entity_type_id,
                            :attribute_set_id   => attribute_set.attribute_set_id,
