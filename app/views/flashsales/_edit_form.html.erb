@@ -1,0 +1,59 @@
+<form accept-charset="UTF-8" action="/flashsales/<%= @eventrule['rule_id'] %>" class="form-horizontal" id="edit_flashsales" method="post">
+<% if @eventrule.errors.any? %>
+	<div class="alert alert-error">
+		<button type="button" class="close" data-dismiss="alert">×</button>
+		<strong><%= pluralize(@eventrule.errors.count, "error") %></strong> 
+		<ul>
+		   <% @eventrule.errors.full_messages.each do |msg| %>
+		      <li><%= msg %></li>
+		   <% end %>
+		</ul>
+	</div>
+<% end %>
+<fieldset>
+<input name="_method" type="hidden" value="put" />
+<input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
+<input name="body" type="hidden" id="body" value="" />
+<div class="control-group">
+	<label class="control-label" for="from-date">开始时间</label>
+	<div class="datetimepicker controls">
+      <input value="<%= @eventrule.from_date.strftime("%Y-%m-%d %H:%M:%S") %>" id="from-date" name="eventproduct[from_date]" class="input-xlarge uneditable-input" type="text" />
+      <span class="add-on">
+       <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span>
+   </div>
+</div>
+<div class="control-group">
+	<label class="control-label" for="end-date">结束时间</label>
+	<div class="controls">
+		<input type="text" name="eventproduct[end_date]" class="input-xlarge uneditable-input" readonly=readonly value="<%= @eventrule.end_date.strftime("%Y-%m-%d %H:%M:%S") %>" id="end-date" />
+	</div>
+</div>
+
+<div class="control-group">
+	 <table class="table table-striped">
+		  <thead>
+			  <tr>
+				  <th>商品名称</th>
+				  <th>市场价格</th>
+				  <th>闪购价格</th>
+				  <th>闪购库存</th>                                          
+                                  <th></th>
+			  </tr>
+		  </thead>   
+		  <tbody id="falshsales_products_tbody">
+		  </tbody>
+	 </table>
+	  <div class="pagination pagination-centered">
+	    <ul>
+			<li><button id="add-flashsales-product-btn" class="btn">添加商品</button></li> 
+	    </ul>
+	</div>     
+</div>
+
+<div class="form-actions">
+  <input type="button" id="edit-flashevent-btn" class="btn btn-primary" value="更新" />
+  <input type="reset" class="btn" value="重置" />
+</div>
+</fieldset>
+</form>

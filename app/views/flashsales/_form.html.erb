@@ -1,0 +1,58 @@
+<form accept-charset="UTF-8" action="/flashsales" class="form-horizontal" id="new_flashsales" method="post">
+<% if @eventrule.errors.any? %>
+	<div class="alert alert-error">
+		<button type="button" class="close" data-dismiss="alert">×</button>
+		<strong><%= pluralize(@eventrule.errors.count, "error") %></strong> 
+		<ul>
+		   <% @eventrule.errors.full_messages.each do |msg| %>
+		      <li><%= msg %></li>
+		   <% end %>
+		</ul>
+	</div>
+<% end %>
+<fieldset>
+<input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
+<input name="body" type="hidden" id="body" value="" />
+<div class="control-group">
+	<label class="control-label" for="from-date">开始时间</label>
+	<div class="datetimepicker controls">
+      <input id="from-date" class="input-xlarge uneditable-input" name="eventproduct[from_date]" type="text" />
+      <span class="add-on">
+       <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span>
+    </div>
+</div>
+<div class="control-group">
+	<label class="control-label" for="end-date">结束时间</label>
+	<div class="controls">
+		<input type="text" name="eventproduct[end_date]" class="input-xlarge uneditable-input" readonly=readonly id="end-date" />
+	</div>
+</div>
+
+<div class="control-group">
+	 <table class="table table-striped">
+		  <thead>
+			  <tr>
+				  <th>商品名称</th>
+				  <th>市场价格</th>
+				  <th>闪购价格</th>
+				  <th>闪购库存</th>                                          
+                                  <th></th>
+			  </tr>
+		  </thead>   
+		  <tbody id="falshsales_products_tbody">
+		  </tbody>
+	 </table>
+	  <div class="pagination pagination-centered">
+	    <ul>
+			<li><button id="add-flashsales-product-btn" class="btn">添加商品</button></li> 
+	    </ul>
+	</div>     
+</div>
+
+<div class="form-actions">
+  <input type="button" id="add-flashevent-btn" class="btn btn-primary" value="添加" />
+  <input type="reset" class="btn" value="重置" />
+</div>
+</fieldset>
+</form>
