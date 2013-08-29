@@ -91,8 +91,8 @@ class Product < ActiveRecord::Base
   end
  
   def self.get_product_names
-    name                          = self.find_by_sql("select * from eav_attribute where `attribute_code` = 'name' and `entity_type_id` = #{ApplicationController::PRODUCT_TYPE_ID} limit 1")
-    name_values                   = self.all_attribute_values( name[0] )
+    name                          = EavAttribute.get_attribute( {attribute_code: 'name', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
+    name_values                   = self.all_attribute_values( name )
     return name_values   
   end
 
@@ -163,7 +163,6 @@ class Product < ActiveRecord::Base
 
     values                        = Array.new
     type_values.each do | value_entity |
-      #values << "( #{ApplicationController::PRODUCT_TYPE_ID}, #{value_entity['attribute_id']}, #{value_entity['entity_id']}, #{value_entity['value']} )"
       entity_value                = {
                                       :entity_type_id => ApplicationController::PRODUCT_TYPE_ID,
                                       :attribute_id   => value_entity['attribute_id'],
@@ -175,7 +174,7 @@ class Product < ActiveRecord::Base
       end
       values.push( entity_value )
     end
-    #res                           =  ActiveRecord::Base.connection().insert("INSERT INTO `product_entity_#{type}` (`entity_type_id`, `attribute_id`, `entity_id`, `value`) VALUES #{values.join(',')}") 
+  
     modelEntity                  = nil
     case type
     when "varchar"
@@ -201,11 +200,14 @@ class Product < ActiveRecord::Base
     
     values                        = Array.new
     categories.each do | category_id |
-      values << "( #{category_id}, #{product_id} )"
+      categort_product            = {
+                                      :category_id      => category_id,
+                                      :product_id       => product_id
+                                    }
+      values <<  categort_product
     end
     
-    res                           = ActiveRecord::Base.connection().insert("INSERT INTO `category_product` (`category_id`, `product_id`) VALUES #{values.join(',')}") 
-    return res
+    CategoryProduct.create( values )
   end
 
   def self.update_product_attributes( product, attribute_values )
@@ -259,15 +261,15 @@ class Product < ActiveRecord::Base
     if modelEntity
       entity_option             = { entity_type_id: ApplicationController::PRODUCT_TYPE_ID, attribute_id: attribute.attribute_id, entity_id: product.entity_id}
        
-      modelEntity.create_with( value: attribute.value ).find_or_create_by( entity_option )
-      # entity_value              = modelEntity.where( entity_option ).first
-      # if entity_value
-      #   entity_value.update_attributes( {:value => attribute.value } )
-      # else
-      #   entity_value            = modelEntity.new( entity_option )
-      #   entity_value.value      = attribute.value
-      #   entity_value.save
-      # end
+      #modelEntity.create_with( value: attribute.value ).find_or_create_by( entity_option )
+      entity_value              = modelEntity.where( entity_option ).first
+      if entity_value
+        entity_value.update_attributes( {:value => attribute.value } )
+      else
+        entity_value            = modelEntity.new( entity_option )
+        entity_value.value      = attribute.value
+        entity_value.save
+      end
     end
   end
   # def method_missing(name, *args)
