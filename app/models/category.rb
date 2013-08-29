@@ -156,8 +156,8 @@ class Category < ActiveRecord::Base
        end
       
        category.update_attributes( { :parent_id => category_params['parent_id'], :path => category_params['path'], :level => category_params['level'], :updated_at => DateTime.now } )
-       upsert_category_attribute( name_attribute_id, @category.entity_id, params[:category][:name], 'varchar' )
-       upsert_category_attribute( description_attribute_id, @category.entity_id, params[:category][:description], 'text' )
+       upsert_category_attribute( name_attribute_id, category.entity_id, params[:category][:name], 'varchar' )
+       upsert_category_attribute( description_attribute_id, category.entity_id, params[:category][:description], 'text' )
      end 
   
     rescue => err
