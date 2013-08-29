@@ -130,7 +130,7 @@ class Category < ActiveRecord::Base
     begin
      self.transaction do 
        if parent_category
-         update_level( category.entity_id, category_params['level'], parent_category )
+         update_level( category.entity_id, category_params['level'], parent_category.path )
          category_params["path"]               = parent_category.path + "/" + category.entity_id.to_s
        else
          update_level( category.entity_id, category_params['level'], '' )
