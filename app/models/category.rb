@@ -124,6 +124,7 @@ class Category < ActiveRecord::Base
     category.updated_at                         = DateTime.now
 
     self.transaction do
+      category.save
       if parent_category
          category.path                          = parent_category.path + "/" + category.entity_id.to_s
         parent_category.children_count         += 1
