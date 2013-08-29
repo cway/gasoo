@@ -188,7 +188,7 @@ class Category < ActiveRecord::Base
         modelEntity                        = CategoryEntityText
     end
 
-    entity_option                          = { entity_type_id: ApplicationController::CATEGORY_TYPE_ID, attribute_id: attribute_id, :entity_id: entity_id }
+    entity_option                          = { entity_type_id: ApplicationController::CATEGORY_TYPE_ID, attribute_id: attribute_id, entity_id: entity_id }
     entity_value                           = modelEntity.where( entity_option ).first
     if entity_value
       entity_value.update_attribute( 'value', entity_name["value"] )
