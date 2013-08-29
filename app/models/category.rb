@@ -51,7 +51,7 @@ class Category < ActiveRecord::Base
       category_ids              = [category_ids]
     end
     name_attribute_id           = get_attribute_id( 'name' )
-    data                        = CategoryEntityVarchar.select("entity_id, value").where( {attribute_id: => name_attribute_id, entity_id: category_ids} ) #self.find_by_sql("select entity_id, value from category_entity_varchar where attribute_id = #{name_attribute_id} and entity_id in ( #{category_ids.join(',')} )")
+    data                        = CategoryEntityVarchar.select("entity_id, value").where( {attribute_id: name_attribute_id, entity_id: category_ids} ) #self.find_by_sql("select entity_id, value from category_entity_varchar where attribute_id = #{name_attribute_id} and entity_id in ( #{category_ids.join(',')} )")
     categories_name_list        = Hash.new
     data.each do |category|
       categories_name_list[category.entity_id] = category.value
