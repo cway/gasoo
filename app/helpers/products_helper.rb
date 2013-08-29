@@ -29,7 +29,7 @@ module ProductsHelper
      end
 
      input_str       += "</div></div>"      
-     return input_str   
+     input_str   
    end
 
    def configurable_tab_title( product )
@@ -37,7 +37,7 @@ module ProductsHelper
        return
      end
      
-     return "<li><a href=\"#configurable_attributes_tab\" id=\"configurable_attributes_tab_title\">配置选项</a></li>"
+     "<li><a href=\"#configurable_attributes_tab\" id=\"configurable_attributes_tab_title\">配置选项</a></li>"
    end
 
    def configurable_tab_content( product )
@@ -52,18 +52,19 @@ module ProductsHelper
      attribute_set_id            = product.attribute_set_id.to_i
      type_id                     = ApplicationController::SIMPLE_PRODUCT_ID
      conditions                  = { :attribute_set_id => attribute_set_id, :type_id => type_id }
-     products                    = Product.where( conditions ).select("entity_id")
+     products                    = Product.select("entity_id").where( conditions )
      ids                         = Array.new
      products.each do |product|
        ids.push( product.entity_id )
      end
 
-     attribute_values            = Product.get_simple_products_attributes( ids )
+     attribute_values                               = Product.get_simple_products_attributes( ids )
      products.each_with_index do |product, index|
-       products[index]["name"]   = attribute_values[:name][product.entity_id]
-       products[index]["sku"]    = attribute_values[:sku][product.entity_id]
-       products[index]["price"]  = attribute_values[:price][product.entity_id]
-       products[index]["qty"]    = attribute_values[:qty][product.entity_id]
+       products[index].product_attributes           =   Hash.new
+       products[index].product_attributes["name"]   = attribute_values[:name][product.entity_id]
+       products[index].product_attributes["sku"]    = attribute_values[:sku][product.entity_id]
+       products[index].product_attributes["price"]  = attribute_values[:price][product.entity_id]
+       products[index].product_attributes["qty"]    = attribute_values[:qty][product.entity_id]
      end
   
      if product.children
@@ -72,12 +73,12 @@ module ProductsHelper
          if product.children.include? (tmp_product.entity_id)
            configurable_str       += "checked=checked "
          end
-         configurable_str         +=  "name=\"selected_simple_products\" value=" + tmp_product.entity_id.to_s + " ></div></td><td class='center'>" + tmp_product.name + "</td><td class='center'>" + tmp_product.sku + "</td><td class='center'>" + tmp_product.price.to_s + "</td><td class='center'>" + tmp_product.qty.to_s + "</td></tr>"
+         configurable_str         +=  "name=\"selected_simple_products\" value=" + tmp_product.entity_id.to_s + " ></div></td><td class='center'>" + tmp_product.product_attributes['name'] + "</td><td class='center'>" + tmp_product.product_attributes['sku'] + "</td><td class='center'>" + tmp_product.product_attributes['price'].to_s + "</td><td class='center'>" + tmp_product.product_attributes['qty'].to_s + "</td></tr>"
 
        end
      end
      configurable_str           += "</tbody></table></div></div><!--/span--></div><!--/row-->"
      configurable_str           += "</div>"
-     return configurable_str
+     configurable_str
    end
 end
