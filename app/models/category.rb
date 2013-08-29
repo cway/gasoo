@@ -166,7 +166,7 @@ class Category < ActiveRecord::Base
   end
 
 
-  def upsert_category_attribute( attribute_id, entity_id, value, backend_type )
+  def self.upsert_category_attribute( attribute_id, entity_id, value, backend_type )
     attribute_params                       = Hash.new
     attribute_params["attribute_id"]       = attribute_id
     attribute_params["entity_id"]          = entity_id
