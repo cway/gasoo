@@ -20,18 +20,6 @@ class CategoriesController < ApplicationController
     category_params['parent_id']        = params[:category]['parent_id']
     category_params['attribute_set_id'] = 2
     category_params["entity_type_id"]   = ApplicationController::CATEGORY_TYPE_ID
-    parent_id                           = category_params["parent_id"].to_i
-    
-    if parent_id != 0
-      parent_category                   = Category.find( parent_id )
-      category_params['parent_id']      = parent_id
-      category_params['level']          = parent_category.level + 1
-    else
-      category_params['parent_id']      = 0
-      category_params['level']          = 1 
-    end  
-    category_params["created_at"]       = DateTime.now
-    category_params["updated_at"]       = DateTime.now
       
     begin
       category                          = Category.new( category_params )

@@ -110,9 +110,20 @@ class Category < ActiveRecord::Base
   def self.insert_category( category, params )
     name_attribute_id                           = get_attribute_id("name")
     description_attribute_id                    = get_attribute_id("description")
-     
+    parent_id                                   = category.parent_id
+    parent_category                             = self.where( { entity_id: parent_id } ).first
+
+    if parent_category
+      category.parent_id                        = parent_id
+      category.level                            = parent_category.level + 1
+    else
+      category.parent_id                        = 0
+      category.level                            = 1 
+    end  
+    category.created_at                         = DateTime.now
+    category.updated_at                         = DateTime.now
+
     self.transaction do
-      category.save
       if parent_category
          category.path                          = parent_category.path + "/" + category.entity_id.to_s
         parent_category.children_count         += 1
