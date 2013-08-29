@@ -9,7 +9,6 @@ module CategoryHelper
     ids_path.split('/').each do |id|
       name_path      << category_list[id.to_i] << "/"
     end
-    
     name_path
   end
 end

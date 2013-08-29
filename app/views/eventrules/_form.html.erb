@@ -1,0 +1,59 @@
+<form accept-charset="UTF-8" action="/eventrules" class="form-horizontal" id="new_eventrule" method="post">
+<% if @eventrule.errors.any? %>
+	<div class="alert alert-error">
+		<button type="button" class="close" data-dismiss="alert">×</button>
+		<strong><%= pluralize(@eventrule.errors.count, "error") %></strong> 
+		<ul>
+		   <% @eventrule.errors.full_messages.each do |msg| %>
+		      <li><%= msg %></li>
+		   <% end %>
+		</ul>
+	</div>
+<% end %>
+<fieldset>
+<input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
+<div class="control-group">
+	<label class="control-label" for="eventrule-name">活动名称</label>
+	<div class="controls">
+	  <input type="text" name="eventrule[name]" class = "input-xlarge focused" id = "eventrule-name" />
+	</div>
+</div>
+<div class="control-group">
+	<label class="control-label" for="eventrule-description">活动简介</label>
+	<div class="controls">
+	  <textarea name="eventrule[description]" id="eventrule-description" class="autogrow"></textarea>
+	</div>
+</div>
+<div class="control-group">
+	<label class="control-label" for="from-date">开始时间</label>
+	<div class="datetimepicker controls">
+      <input id="from-date" class="input-xlarge uneditable-input" name="eventproduct[from_date]" type="text" />
+      <span class="add-on">
+       <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span>
+    </div>
+</div>
+<div class="control-group">
+	<label class="control-label" for="end-date">结束时间</label>
+	<div class="datetimepicker controls">
+      <input id="end_date" class="input-xlarge uneditable-input" name="eventproduct[end_date]" type="text" />
+      <span class="add-on">
+       <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span>
+    </div>
+</div>
+<div class="control-group">
+	<label class="control-label" for="select-is-active">启用</span></label>
+	<div class="controls">
+	 <select id="select-is-active" name="eventrule[is_active]">
+		 <option value="1">是</option>
+		 <option value="0">否</option> 
+	  </select>
+	</div>
+</div>
+<div class="form-actions">
+  <input type="submit" class="btn btn-primary" value="添加" />
+  <input type="reset" class="btn" value="重置" />
+</div>
+</fieldset>
+</form>
