@@ -103,9 +103,9 @@ class ProductsController < ApplicationController
   end
 
   def init_product_group_list( attribute_set_id )
-    attribute_list                   = Product.get_attributes( ApplicationController::PRODUCT_TYPE_ID, attribute_set_id)
-    group_count                      = 0
-    @product.product_attributes      = Hash.new
+    attribute_list                                              = Product.get_attributes( ApplicationController::PRODUCT_TYPE_ID, attribute_set_id)
+    group_count                                                 = 0
+    @product.product_attributes                                 = Hash.new
     attribute_list.each do |attribute|
       unless @group_list.has_key? attribute.attribute_group_id
         @group_list[attribute.attribute_group_id]               = Hash.new 
@@ -126,24 +126,24 @@ class ProductsController < ApplicationController
       attribute.value                                           = Product.get_product_attribute_value( params[:id], attribute )
       @group_list[attribute.attribute_group_id]["attributes"].push( attribute )
       unless attribute.value == ""
-        @product.product_attributes[attribute.attribute_code]           = attribute.value
+        @product.product_attributes[attribute.attribute_code]   = attribute.value
       end
     end
   end
 
   def fast_new
-    attribute_set_id                   = params[:set].to_i
-    type_id                            = ApplicationController::SIMPLE_PRODUCT_ID
+    attribute_set_id                                            = params[:set].to_i
+    type_id                                                     = ApplicationController::SIMPLE_PRODUCT_ID
 
-    @product                           = Product.new 
+    @product                                                    = Product.new 
     init_product_params( attribute_set_id, type_id, params )
 
-    @group_list                        = Hash.new
+    @group_list                                                 = Hash.new
     init_product_group_list( attribute_set_id )
     
     
     #init_new_product_js => true load init/new_product.js
-    @init_new_product_js               = true 
+    @init_new_product_js                                        = true 
     puts @group_list.to_json
     render( "fast_new" )
   end
@@ -157,7 +157,7 @@ class ProductsController < ApplicationController
 
     if @product.type_id.to_i == ApplicationController::CONFIGURABLE_PRODUCT_ID
       children                                                  = ProductRelation.find(:all, :conditions => [ "parent_id = #{@product.entity_id}" ], :select => "child_id" )
-      @product.children                                      = Array.new 
+      @product.children                                         = Array.new 
       children.each do |child|
         @product.children.push( child.child_id )
       end
@@ -175,10 +175,10 @@ class ProductsController < ApplicationController
 
   # POST /products
   def create
-    product_info                           = JSON.parse( params[:body] )
-    attribute_set_id                       = product_info["attribute_set_id"]
-    type_id                                = product_info["type_id"]
-    attribute_list                         = Product.get_attributes(ApplicationController::PRODUCT_TYPE_ID, attribute_set_id) 
+    product_info                           =  JSON.parse( params[:body] )
+    attribute_set_id                       =  product_info["attribute_set_id"]
+    type_id                                =  product_info["type_id"]
+    attribute_list                         =  Product.get_attributes(ApplicationController::PRODUCT_TYPE_ID, attribute_set_id) 
    
     begin
       Product.transaction do
@@ -187,10 +187,10 @@ class ProductsController < ApplicationController
         product_entity['attribute_set_id'] =  attribute_set_id
         product_entity['type_id']          =  type_id
         product_entity['sku']              =  product_info["sku"]
-        @product                           = Product.new( product_entity )
+        @product                           =  Product.new( product_entity )
         @product.save
       
-        attribute_types_and_value          = Hash.new
+        attribute_types_and_value          =  Hash.new
          
         attribute_list.each do |attribute|
           unless attribute_types_and_value.has_key? attribute.backend_type
@@ -353,7 +353,7 @@ class ProductsController < ApplicationController
   # DELETE /products/1
   def destroy
     begin
-      @product                              = Product.find(params[:id])
+      @product                                      = Product.find(params[:id])
       @product.update_attribute("is_active", 0);
     rescue => err
       puts err.backtrace
@@ -362,17 +362,17 @@ class ProductsController < ApplicationController
   end 
 
   def get_children
-    product_id                            = params['entity_id']
-    children                              = ProductRelation.find_all_by_parent_id( product_id )
+    product_id                                      = params['entity_id']
+    children                                        = ProductRelation.find_all_by_parent_id( product_id )
     unless children.empty?
-      children_ids                        = Array.new
+      children_ids                                  = Array.new
       children.each do |child|
         children_ids.push( child.child_id )
       end 
-      product_children                    = Product.get_flashsales_attributes( children_ids )
-      render :json                         => { :status => 1, :data => product_children }
+      product_children                              = Product.get_flashsales_attributes( children_ids )
+      render :json                                  => { :status => 1, :data => product_children }
     else
-      render :json                         => { :status => 0, :data => [] }
+      render :json                                  => { :status => 0, :data => [] }
     end
 
   end
@@ -388,5 +388,5 @@ class ProductsController < ApplicationController
       end
     end
   end
-  
+
 end

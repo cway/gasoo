@@ -9,8 +9,7 @@ class Category < ActiveRecord::Base
   #get category index view data
   def self.get_index_data
     name_attribute_id           = self.get_attribute_id( 'name' )
-    categories                  = Category.find_by_sql( "select category_entity.*, category_entity_varchar.value as name from category_entity left join category_entity_varchar on category_entity.entity_id = category_entity_varchar.entity_id and category_entity_varchar.attribute_id = #{name_attribute_id};" )
-    return categories
+    Category.find_by_sql( "select category_entity.*, category_entity_varchar.value as name from category_entity left join category_entity_varchar on category_entity.entity_id = category_entity_varchar.entity_id and category_entity_varchar.attribute_id = #{name_attribute_id};" )
   end
  
   def self.get_category_attributes_value( category_id, attribute_ids, data_type )

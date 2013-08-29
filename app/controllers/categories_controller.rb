@@ -5,8 +5,8 @@ class CategoriesController < ApplicationController
   
   # GET /index 
   def index
-    name_attribute_id                   = 25;
-    @categories                         = Category.get_index_data()
+    #name_attribute_id                   = Category.get_attribute_id('name')
+    @categories                         = Category.get_index_data
   end
   
   # GET /categories/new 
