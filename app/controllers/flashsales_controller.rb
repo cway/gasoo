@@ -95,7 +95,7 @@ class FlashsalesController < ApplicationController
       @eventrule.product_ids.push( product['product_id'] )
     end
 
-    name_list                                              =  EventProduct.get_products_name( @eventrule["product_ids"] )
+    name_list                                              =  EventProduct.get_products_name( @eventrule.product_ids )
     @eventrule.products.each_with_index do |event_product, index|
       begin
         if name_list.has_key? event_product['product_id']
