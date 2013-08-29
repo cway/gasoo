@@ -46,7 +46,7 @@ class EventrulesController < ApplicationController
       eventrule        = Eventrule.find( params[:id] )
 
       if eventrule.update_attributes( params[:eventrule].permit! )
-        redirect_to(eventrule,  :notice => '活动更新成功.')  
+        redirect_to :action => 'edit', :id => params[:id], :notice => '活动更新成功.'
       else
         render :action => "edit", :id => params[:id]
       end
@@ -57,7 +57,7 @@ class EventrulesController < ApplicationController
 
   def destory
     begin
-      eventrule      = Eventrule.find(params[:id])
+      eventrule        = Eventrule.find(params[:id])
       eventrule.update_attribute("is_active", 0);
     rescue => err
       puts err.backtrace
