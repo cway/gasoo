@@ -4,6 +4,7 @@ EcAdmin::Application.routes.draw do
   resources  :attributes
   resources  :attribute_sets
   resources  :products
+  resources  :categories
   get  'categories/get_tree'               => 'categories#get_tree'
   get  'attribute_groups/get_attributes'   => 'attribute_groups#get_attributes'
   get  'products/get_children'             => 'products#get_children'
