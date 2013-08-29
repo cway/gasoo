@@ -113,7 +113,7 @@ class FlashsalesController < ApplicationController
 
             children.each_with_index do |child, child_index|
               children_list[child['product_id']]              =  child
-              children_list[child['product_id']]['name']      =  child_name_list[child['product_id']
+              children_list[child['product_id']]['name']      =  child_name_list[child['product_id']]
               children_list[child['product_id']]['price']     =  child['normal_price']
               children_list[child['product_id']]['entity_id'] =  child['product_id']
             end
