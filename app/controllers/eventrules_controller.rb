@@ -5,17 +5,17 @@ class EventrulesController < ApplicationController
   
   # GET /index
   def index
-    @eventrules       = Eventrule.all
+    @eventrules          = Eventrule.all
   end
   
   # GET /eventrules/new
   def new          
-    @eventrules       = Eventrule.new
+    @eventrules          = Eventrule.new
   end
   
   # POST /eventrules/create 
   def create 
-    eventrule        = Eventrule.new(params[:eventrule])
+    eventrule            = Eventrule.new( params[:eventrule].permit! )
 
     if eventrule.save
       redirect_to(eventrule,  :notice => '活动创建成功.')  
@@ -45,7 +45,7 @@ class EventrulesController < ApplicationController
     begin
       eventrule        = Eventrule.find( params[:id] )
 
-      if eventrule.update_attributes( params[:eventrule] )
+      if eventrule.update_attributes( params[:eventrule].permit! )
         redirect_to(eventrule,  :notice => '活动更新成功.')  
       else
         render :action => "edit", :id => params[:id]
