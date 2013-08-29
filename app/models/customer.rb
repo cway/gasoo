@@ -2,7 +2,6 @@
 #author cway 2013-07-16
 
 class Customer < ActiveRecord::Base
-  attr_accessible :email
   self.table_name = "customer_entity"
   
   def self.get_customer_list
