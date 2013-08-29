@@ -209,11 +209,11 @@ class Product < ActiveRecord::Base
   end
 
   def self.update_product_attributes( product, attribute_values )
-    attributes                    = Array.new
+    attributes                          = Array.new
     attribute_values.each do |attribute_code, attribute_value|
-       attribute_info             = self.find_by_sql("select * from eav_attribute where `attribute_code` = \"#{attribute_code}\"")#Attribute.find_by_attribute_code( attribute_code ) 
+       attribute_info                   = EavAttribute.where( {attribute_code: attribute_code, entity_type_id: ApplicationController::PRODUCT_TYPE_ID} ).first
        if attribute_info
-         attribute_info           = attribute_info[0]
+         attribute_info                 = attribute_info
          
          if attribute_value.class == Array
             attribute_info["value"]     = attribute_value.to_json
@@ -245,15 +245,15 @@ class Product < ActiveRecord::Base
       end 
 
       if modelEntity
-        entity_option             = {:entity_type_id => ApplicationController::PRODUCT_TYPE_ID, :attribute_id => attribute.attribute_id, :entity_id => product.entity_id}
-          entity_value            = modelEntity.first( :conditions => entity_option )
-          if entity_value
-            entity_value.update_attributes( {:value => attribute["value"] } )
-          else
-            entity_value          = modelEntity.new( entity_option )
-            entity_value["value"] = attribute["value"]
-            entity_value.save
-          end
+        entity_option             = { entity_type_id: ApplicationController::PRODUCT_TYPE_ID, attribute_id: attribute.attribute_id, entity_id: product.entity_id}
+        entity_value              = modelEntity.where( entity_option ).first
+        if entity_value
+          entity_value.update_attributes( {:value => attribute["value"] } )
+        else
+          entity_value            = modelEntity.new( entity_option )
+          entity_value.value      = attribute["value"]
+          entity_value.save
+        end
       end
     end  
   end

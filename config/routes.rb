@@ -5,6 +5,7 @@ EcAdmin::Application.routes.draw do
   resources  :attribute_sets
   resources  :products
   get  'attribute_groups/get_attributes'   => 'attribute_groups#get_attributes'
+  get  'products/get_children'             => 'products#get_children'
   root :to => 'main#index'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
