@@ -99,7 +99,7 @@ class FlashsalesController < ApplicationController
     @eventrule.products.each_with_index do |event_product, index|
       begin
         if name_list.has_key? event_product['product_id']
-          @eventrule.products[index]['name']               =  name_list[event_product['product_id']
+          @eventrule.products[index]['name']               =  name_list[event_product['product_id']]
           @eventrule.products[index]['price']              =  @eventrule.products[index]['normal_price']
 
           children                                         =  EventProductChildren.get_event_product_children event_product['event_product_id']
