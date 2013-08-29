@@ -1,0 +1,51 @@
+<form accept-charset="UTF-8" action="/categories" class="form-horizontal" id="new_category" method="post">
+<% if @category.errors.any? %>
+	<div class="alert alert-error">
+		<button type="button" class="close" data-dismiss="alert">×</button>
+		<strong><%= pluralize(@category.errors, "error") %></strong> 
+		<ul>
+		   <% @category.errors.full_messages.each do |msg| %>
+		      <li><%= msg %></li>
+		   <% end %>
+		</ul>
+	</div>
+<% end %>
+<fieldset>
+<input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
+<input type="hidden" name="category[attribute_set_id]" value="2" />
+<div class="control-group">
+	<label class="control-label" for="category_name">类目名称<span class="icon icon-red icon-star-on"></span></label>
+	<div class="controls">
+	  <input type="text" name="category[name]" class = "input-xlarge focused" id = "category_name" />
+	</div>
+</div>
+<div class="control-group">
+  <label class="control-label" for="category_description">类目简介</label>
+  <div class="controls">
+	<textarea class="cleditor" name="category[description]" id="category_description" rows="3"></textarea>
+  </div>
+</div>
+<div class="control-group">
+	<label class="control-label" for="select-parent-id">父目录</label>
+	<div class="controls">
+	  <select id="select-parent-id" name="category[parent_id]" data-rel="chosen">
+		<option value=0>无</option>
+		<% @categories.each do |category| %>
+		<option value=<%= category.entity_id %>><%= category.name %></option>
+		<% end %>
+	  </select>
+	</div>
+</div>
+<!--
+<div class="control-group">
+	<label class="control-label" for="attribute_set_id">属性集</label>
+	<div class="controls">
+	  <input class="input-xlarge disabled" id="attribute_set_id" type="text" name="category[attribute_set_id]" placeholder="Default" disabled="" value="2" />
+	</div>
+</div> -->
+<div class="form-actions">
+  <button type="submit" class="btn btn-primary">添加</button>
+  <button type="reset" class="btn">重置</button>
+</div>
+</fieldset>
+</form>
