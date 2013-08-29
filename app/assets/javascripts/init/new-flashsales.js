@@ -32,18 +32,21 @@ function FlasheventObj( entity )
 
   for(var entity_code in entity)
   {
-      this[entity_code]          = entity[entity_code];
+      if( entity[entity_code] != null )
+      {
+        this[entity_code]           = entity[entity_code];
+      }
   }  
   console.log( this );
 }
 
 
-FlasheventObj.prototype.FromDate = function()
+FlasheventObj.prototype.FromDate    = function()
 {
   return this.from_date.format('yyyy-MM-dd hh:mm:ss');
 }
 
-FlasheventObj.prototype.EndDate = function()
+FlasheventObj.prototype.EndDate     = function()
 {
   return this.end_date.format('yyyy-MM-dd hh:mm:ss');
 }
