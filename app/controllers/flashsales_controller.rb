@@ -88,38 +88,37 @@ class FlashsalesController < ApplicationController
       render :json => '不存在该闪购'
       return 
     end 
-
-    @eventrule                                             =  ApplicationController::model_to_hash( @eventrule )
-    @eventproducts                                         =  EventProduct.find_all_by_rule_id( rule_id )
-    @eventrule["products"]                                 =  @eventproducts   
-    @eventrule["product_ids"]                              = Array.new
-    @eventrule["products"].each do |product|
-      @eventrule["product_ids"].push( product.product_id )
+ 
+    @eventproducts                                         =  EventProduct.where( { rule_id: rule_id } )
+    @eventrule.products                                    =  @eventproducts
+    @eventrule.product_ids                                 =  Array.new
+    @eventrule.products.each do |product|
+      @eventrule.product_ids.push( product.product_id )
     end
 
-    name_list                                              = EventProduct.get_products_name( @eventrule["product_ids"] )
-    @eventrule["products"].each_with_index do |event_product, index|
+    name_list                                              =  EventProduct.get_products_name( @eventrule["product_ids"] )
+    @eventrule.products.each_with_index do |event_product, index|
       begin
         if name_list.has_key? event_product.product_id
-          @eventrule["products"][index]["name"]            = name_list[event_product.product_id]
-          @eventrule["products"][index]["price"]           = @eventrule["products"][index]["normal_price"]
+          @eventrule.products[index].name                  =  name_list[event_product.product_id]
+          @eventrule.products[index].price                 =  @eventrule.products[index].normal_price
 
-          children                                         = EventProductChildren.find_all_by_parent_event_product_id( event_product.event_product_id  )
+          children                                         =  EventProductChildren.where( {parent_event_product_id: event_product.event_product_id} )
           if children
-            children_list                                  = Hash.new
-            children_ids                                   = Array.new
+            children_list                                  =  Hash.new
+            children_ids                                   =  Array.new
             children.each do |child|
               children_ids.push( child.product_id )
             end
-            child_name_list                                = EventProduct.get_products_name( children_ids )
+            child_name_list                                =  EventProduct.get_products_name( children_ids )
 
             children.each_with_index do |child, child_index|
               children_list[child.product_id]              =  child
-              children_list[child.product_id]['name']      =  child_name_list[child.product_id]
-              children_list[child.product_id]['price']     =  child["normal_price"]
-              children_list[child.product_id]['entity_id'] =  child["product_id"]
+              children_list[child.product_id].name         =  child_name_list[child.product_id]
+              children_list[child.product_id].price        =  child.normal_price
+              children_list[child.product_id].entity_id    =  child.product_id
             end
-            @eventrule["products"][index]['children']      = children_list
+            @eventrule.products[index].children            =  children_list
           end
           
 

@@ -3,7 +3,7 @@
 
 class Eventrule < ActiveRecord::Base
    #attr_accessible  :parent_rule_id ,:name, :description, :from_date, :end_date, :is_active
-   attr_accessor :products
+   attr_accessor :products, :product_ids
    self.table_name = "eventrule"
    validates :name, :from_date, :end_date, :presence => true
 end

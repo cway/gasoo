@@ -3,7 +3,7 @@
 
 class EventProduct < ActiveRecord::Base
    #attr_accessible :event_product_id, :rule_id, :product_id, :from_date, :end_date, :action_operator, :action_amount, :rule_price, :normal_price, :qty
-   attr_writer :name, :price, :children
+   attr_accessor :name, :price, :children, :entity_id
    self.table_name = "event_product"
    validates :rule_id, :product_id, :presence => true
 
