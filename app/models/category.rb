@@ -107,6 +107,26 @@ class Category < ActiveRecord::Base
       return attribute_id
   end
 
+  def self.insert_category( category, params )
+    name_attribute_id                           = get_attribute_id("name")
+    description_attribute_id                    = get_attribute_id("description")
+     
+    self.transaction do
+      category.save
+      if parent_category
+         category.path                          = parent_category.path + "/" + category.entity_id.to_s
+        parent_category.children_count         += 1
+        parent_category.save
+      else
+         category.path                          = category.entity_id.to_s
+      end
+      category.save
+    
+      upsert_category_attribute( name_attribute_id, category.entity_id, params[:category][:name], 'varchar' )
+      upsert_category_attribute( description_attribute_id, category.entity_id, params[:category][:description], 'text' )
+    end
+  end
+
   def self.update_category( category, params )
     name_attribute_id                          = get_attribute_id("name")
     description_attribute_id                   = get_attribute_id("description")

@@ -15,8 +15,7 @@ class CategoriesController < ApplicationController
   end
   
   # POST /categories/create 
-  def create
-    name_attribute_id                   = Category.get_attribute_id("name")
+  def create 
     category_params                     = Hash.new 
     category_params['parent_id']        = params[:category]['parent_id']
     category_params['attribute_set_id'] = 2
@@ -33,35 +32,13 @@ class CategoriesController < ApplicationController
     end  
     category_params["created_at"]       = DateTime.now
     category_params["updated_at"]       = DateTime.now
-    @category                           = Category.new( category_params )
-       
-   
+      
     begin
-     Category.transaction do
-       @category.save
-       if parent_category
-         @category["path"]               = parent_category.path + "/" + @category.entity_id.to_s
-         parent_category.children_count += 1
-         parent_category.save
-       else
-         @category["path"]               = @category.entity_id.to_s
-       end
-       @category.save
-      
-       entity_name                       = Hash.new
-       entity_name["attribute_id"]       = name_attribute_id
-       entity_name["entity_id"]          = @category.entity_id
-       entity_name["entity_type_id"]     = ApplicationController::CATEGORY_TYPE_ID
-       entity_name["value"]              = params[:category][:name] 
-       entity_value                      = CategoryEntityVarchar.new(entity_name);     
-       entity_value.save
-     end
-      
-     redirect_to(@category, :notice => '类目创建成功.')
-  
+      category                          = Category.new( category_params )
+      Category.insert_category category, params
+      redirect_to(@category, :notice => '类目创建成功.') 
     rescue => err
-      @categories                        = Category.all_with_name
-      render :action => "new", :notice => err 
+      redirect_to :action => "new", :notice => err.message
     end 
   end
   
@@ -91,7 +68,7 @@ class CategoriesController < ApplicationController
     begin
       @category                          = Category.find( params[:id] )
       Category.update_category @category, params
-      redirect_to :action => 'show', :id => @category.entity_id, :notice => '类目更新成功.'
+      redirect_to :action => 'edit', :id => @category.entity_id, :notice => '类目更新成功.'
     rescue => err
       redirect_to :action => 'index', :notice => err.message
     end
