@@ -18,7 +18,7 @@ class Category < ActiveRecord::Base
     end
 
     modelEntity                 = nil
-    case attribute.backend_type
+    case data_type
       when "varchar"
         modelEntity             = CategoryEntityVarchar
       when "decimal"            
@@ -40,7 +40,7 @@ class Category < ActiveRecord::Base
   end
   
   def self.all_by_id_index
-    categories                  =  self.get_index_data 
+    categories                  =  get_index_data 
     category_lsit               =  Hash.new
     categories.each do |category|
       category_lsit[category.entity_id] = category.name
@@ -78,8 +78,8 @@ class Category < ActiveRecord::Base
     category                    = self.where( {entity_id: category_id} ).first
     name_attribute              = EavAttribute.select("attribute_id, backend_type").where( {attribute_code: 'name', entity_type_id: ApplicationController::CATEGORY_TYPE_ID} ).first
     description_attribute       = EavAttribute.select("attribute_id, backend_type").where( {attribute_code: 'description', entity_type_id: ApplicationController::CATEGORY_TYPE_ID} ).first
-    category_name               = get_category_attributes_value( category_id, name_attribute['attribute_id'], name_attribute['backend_type'] )
-    category_description        = get_category_attributes_value( category_id, description_attribute['attribute_id'], description_attribute['backend_type'] )
+    category_name               = get_category_attributes_value( category_id, name_attribute.attribute_id, name_attribute.backend_type )
+    category_description        = get_category_attributes_value( category_id, description_attribute.attribute_id, description_attribute.backend_type )
     name                        = ""
     description                 = ""
     unless category_name.empty?
@@ -106,17 +106,17 @@ class Category < ActiveRecord::Base
   end
 
   def self.update_level( category_id, category_level, category_path )
-    category_children           = self.find(:all, :conditions => { :parent_id => category_id.to_i })
+    category_children           = self.where( { parent_id: category_id.to_i } )
     unless category_children.empty?
       category_children.each do | child_category |
         next_level              = category_level + 1
         next_path               = category_path.to_s + "/" + category_id.to_s
-        self.update_level( child_category.entity_id, next_level, next_path )
+        update_level( child_category.entity_id, next_level, next_path )
       end
     end
 
     begin
-      category                  = self.find( category_id )
+      category                  = self.where( {entity_id: category_id} ).first
       category.update_attribute( 'level', category_level) 
       category.update_attribute( 'path',  category_path) 
     rescue => err
