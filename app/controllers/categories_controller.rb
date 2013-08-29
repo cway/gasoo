@@ -189,7 +189,7 @@ class CategoriesController < ApplicationController
    
     include_categories                   = Array.new
     checked_categories.each do |checked_category|
-      include_categories.push( checked_category["category_id"] );
+      include_categories.push( checked_category.category_id );
     end
 
     ids_list                             = Array.new
@@ -197,14 +197,14 @@ class CategoriesController < ApplicationController
       ids_list.push( category.entity_id  )
     end
     
-    category_list                        = get_caregory_list_by_ids( ids_list )
+    category_list                        = get_caregory_list_by_ids( ids_list, include_categories )
      
     respond_to do |format|
       format.json { render :json => category_list }
     end
   end
 
-  def get_caregory_list_by_ids( ids_list )
+  def get_caregory_list_by_ids( ids_list, include_categories )
     category_list                        = Array.new
     if ids_list.empty?
       return category_list
