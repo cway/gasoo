@@ -16,7 +16,7 @@ class EventProduct < ActiveRecord::Base
       return
     end 
    
-    name_list                       = EavAttribute.find_by_sql("select product_entity_varchar.value, product_entity_varchar.entity_id from eav_attribute left join product_entity_varchar on product_entity_varchar.attribute_id = eav_attribute.attribute_id  and product_entity_varchar.entity_id in (#{product_ids.join(',')})  where eav_attribute.`attribute_code` = 'name' and eav_attribute.`entity_type_id` = #{ApplicationController::PRODUCT_TYPE_ID}")
+    name_list                       = ProductEntityVarchar.find_by_sql("select product_entity_varchar.value, product_entity_varchar.entity_id from eav_attribute left join product_entity_varchar on product_entity_varchar.attribute_id = eav_attribute.attribute_id  and product_entity_varchar.entity_id in (#{product_ids.join(',')})  where eav_attribute.`attribute_code` = 'name' and eav_attribute.`entity_type_id` = #{ApplicationController::PRODUCT_TYPE_ID}")
     ret_data                        = Hash.new
     name_list.each do | name_info |
       ret_data[name_info.entity_id] = name_info.value
