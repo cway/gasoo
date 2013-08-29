@@ -30,7 +30,9 @@ class EventProduct < ActiveRecord::Base
      event_products                 = self.where( { rule_id: rule_id } )
      event_products.each do | event_product |
        product                      = Hash.new
-       event_product.each do | attribute, value |
+       product_attributes           = event_product.instance_variable_get( "@attributes" )
+
+       product_attributes.each do | attribute, value |
          product[attribute]         = value
        end
        products                    << product
