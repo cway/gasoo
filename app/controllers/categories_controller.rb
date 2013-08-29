@@ -90,7 +90,7 @@ class CategoriesController < ApplicationController
   def update
     begin
       @category                          = Category.find( params[:id] )
-      Category.update_category @category
+      Category.update_category @category, params
       redirect_to :action => 'show', :id => @category.entity_id, :notice => '类目更新成功.'
     rescue => err
       redirect_to :action => 'index', :notice => err.message

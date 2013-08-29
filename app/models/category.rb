@@ -107,7 +107,7 @@ class Category < ActiveRecord::Base
       return attribute_id
   end
 
-  def self.update_category( category )
+  def self.update_category( category, params )
     name_attribute_id                          = get_attribute_id("name")
     description_attribute_id                   = get_attribute_id("description")
     category_params                            = params[:category]
