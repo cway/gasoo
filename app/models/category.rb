@@ -83,11 +83,11 @@ class Category < ActiveRecord::Base
     name                        = ""
     description                 = ""
     unless category_name.empty?
-      name                      = category_name.value
+      name                      = category_name[0].value
     end
 
     unless category_description.empty?
-      description               = category_description.value
+      description               = category_description[0].value
     end 
     
     category.name               = name
