@@ -31,7 +31,7 @@ class Category < ActiveRecord::Base
         modelEntity             = CategoryEntityText
     end
 
-    data                        = modelEntity.where( {entity_id: category_id, attribute_id: attribute_ids} ).first
+    data                        = modelEntity.where( {entity_id: category_id, attribute_id: attribute_ids} )
     #data                        = self.find_by_sql("select * from category_entity_#{data_type} where entity_id = #{category_id} and attribute_id in ( #{attribute_ids.join(',')} )")
     unless data
       data                      = Array.new
