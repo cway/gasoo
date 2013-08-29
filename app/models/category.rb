@@ -2,7 +2,7 @@
 #author cway 2013-07-09
 
 class Category < ActiveRecord::Base
-  attr_accessor :name :description
+  attr_accessor :name, :description
   #attr_accessible :entity_id, :entity_type_id, :parent_id, :attribute_set_id, :path, :level, :children_count, :created_at, :updated_at
   self.table_name               = "category_entity"
   validates :entity_type_id, :attribute_set_id, :presence => true
