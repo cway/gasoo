@@ -17,13 +17,13 @@
 <div class="control-group">
 	<label class="control-label" for="category_name">类目名称<span class="icon icon-red icon-star-on"></span></label>
 	<div class="controls">
-	  <input type="text" name="category[name]" class = "input-xlarge focused" id = "category_name" value="<%= @category.name %>" />
+	  <input type="text" name="category[name]" class = "input-xlarge focused" id = "category_name" value="<%= @category.category_attributes['name'] %>" />
 	</div>
 </div>
 <div class="control-group">
   <label class="control-label" for="category_description">类目简介</label>
   <div class="controls">
-	<textarea class="cleditor" name="category[description]" id="category_description" rows="3"><%= @category.description %></textarea>
+	<textarea class="cleditor" name="category[description]" id="category_description" rows="3"><%= @category.category_attributes['description'] %></textarea>
   </div>
 </div>
 <div class="control-group">

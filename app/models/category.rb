@@ -2,14 +2,14 @@
 #author cway 2013-07-09
 
 class Category < ActiveRecord::Base
-  attr_accessor :name, :description
+  attr_accessor :category_attributes
   #attr_accessible :entity_id, :entity_type_id, :parent_id, :attribute_set_id, :path, :level, :children_count, :created_at, :updated_at
   self.table_name               = "category_entity"
   validates :entity_type_id, :attribute_set_id, :presence => true
  
   #get category index view data
   def self.get_index_data
-    name_attribute_id           = self.get_attribute_id( 'name' )
+    name_attribute_id           = get_attribute_id( 'name' )
     find_by_sql( "select category_entity.*, category_entity_varchar.value as name from category_entity left join category_entity_varchar on category_entity.entity_id = category_entity_varchar.entity_id and category_entity_varchar.attribute_id = #{name_attribute_id};" )
   end
  
@@ -37,16 +37,16 @@ class Category < ActiveRecord::Base
     unless data
       data                      = Array.new
     end
-    return data
+    data
   end
   
   def self.all_by_id_index
     categories                  =  get_index_data 
-    category_lsit               =  Hash.new
+    category_list               =  Hash.new
     categories.each do |category|
-      category_lsit[category.entity_id] = category.name
+      category_list[category.entity_id] = category.name
     end
-    return category_lsit
+    category_list
   end
 
   def self.all_with_name
@@ -91,8 +91,8 @@ class Category < ActiveRecord::Base
       description               = category_description[0].value
     end 
     
-    category.name               = name
-    category.description        = description
+    category.category_attributes['name']               = name
+    category.category_attributes['description']        = description
     category
   end
 
