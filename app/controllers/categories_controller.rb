@@ -5,7 +5,6 @@ class CategoriesController < ApplicationController
   
   # GET /index 
   def index
-    #name_attribute_id                   = Category.get_attribute_id('name')
     @categories                         = Category.get_index_data
   end
   
@@ -71,7 +70,7 @@ class CategoriesController < ApplicationController
     begin
       @category                          = Category.find( params[:id] )
       name_list                          = Category.get_categories_name( params[:id] )
-      @category["name"]                  = name_list[@category.entity_id]
+      @category.name                     = name_list[@category.entity_id]
 
     rescue => err
       puts err.backtrace

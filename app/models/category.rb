@@ -9,14 +9,30 @@ class Category < ActiveRecord::Base
   #get category index view data
   def self.get_index_data
     name_attribute_id           = self.get_attribute_id( 'name' )
-    Category.find_by_sql( "select category_entity.*, category_entity_varchar.value as name from category_entity left join category_entity_varchar on category_entity.entity_id = category_entity_varchar.entity_id and category_entity_varchar.attribute_id = #{name_attribute_id};" )
+    find_by_sql( "select category_entity.*, category_entity_varchar.value as name from category_entity left join category_entity_varchar on category_entity.entity_id = category_entity_varchar.entity_id and category_entity_varchar.attribute_id = #{name_attribute_id};" )
   end
  
   def self.get_category_attributes_value( category_id, attribute_ids, data_type )
     if attribute_ids.class     != Array
       attribute_ids             = [attribute_ids]
-    end 
-    data                        = self.find_by_sql("select * from category_entity_#{data_type} where entity_id = #{category_id} and attribute_id in ( #{attribute_ids.join(',')} )")
+    end
+
+    modelEntity                 = nil
+    case attribute.backend_type
+      when "varchar"
+        modelEntity             = CategoryEntityVarchar
+      when "decimal"            
+        modelEntity             = CategoryEntityDecimal
+      when "int"
+        modelEntity             = CategoryEntityInt
+      when "media_gallery"
+        modelEntity             = CategoryEntityMediaGallery
+      when "text"
+        modelEntity             = CategoryEntityText
+    end
+
+    data                        = modelEntity.where( {entity_id: category_id, attribute_id: attribute_ids} ).first
+    #data                        = self.find_by_sql("select * from category_entity_#{data_type} where entity_id = #{category_id} and attribute_id in ( #{attribute_ids.join(',')} )")
     unless data
       data                      = Array.new
     end
@@ -33,16 +49,16 @@ class Category < ActiveRecord::Base
   end
 
   def self.all_with_name
-    name_attribute_id           = self.get_attribute_id( 'name' )
-    categories                  = self.find_by_sql("select category_entity.entity_id, category_entity_varchar.value as name from category_entity left join category_entity_varchar on category_entity.entity_id = category_entity_varchar.entity_id where category_entity_varchar.attribute_id = #{name_attribute_id}")
+    name_attribute_id           = get_attribute_id( 'name' )
+    categories                  = find_by_sql("select category_entity.entity_id, category_entity_varchar.value as name from category_entity left join category_entity_varchar on category_entity.entity_id = category_entity_varchar.entity_id where category_entity_varchar.attribute_id = #{name_attribute_id}")
   end
  
   def self.all_with_name_without_children( category_id )
-    name_attribute_id           = self.get_attribute_id( 'name' )
-    children                    = self.get_children( category_id )
+    name_attribute_id           = get_attribute_id( 'name' )
+    children                    = get_children( category_id )
     children.push( category_id )
-    categories                  = self.find_by_sql("select category_entity.entity_id, category_entity_varchar.value as name from category_entity left join category_entity_varchar on category_entity.entity_id = category_entity_varchar.entity_id where category_entity_varchar.attribute_id = #{name_attribute_id} and category_entity.entity_id not in ( #{children.join(',')} )")
-    return categories
+ 
+    self.find_by_sql("select category_entity.entity_id, category_entity_varchar.value as name from category_entity left join category_entity_varchar on category_entity.entity_id = category_entity_varchar.entity_id where category_entity_varchar.attribute_id = #{name_attribute_id} and category_entity.entity_id not in ( #{children.join(',')} )")
   end
   
   def self.get_categories_name( category_ids )
@@ -59,24 +75,24 @@ class Category < ActiveRecord::Base
   end
 
   def self.get_category_info( category_id )
-    category                    = self.find( category_id )
-    name_attribute              = self.find_by_sql("select * from eav_attribute where `attribute_code` = 'name' and `entity_type_id` = #{ApplicationController::CATEGORY_TYPE_ID} limit 1")
-    description_attribute       = self.find_by_sql("select * from eav_attribute where `attribute_code` = 'description' and `entity_type_id` = #{ApplicationController::CATEGORY_TYPE_ID} limit 1")
-    category_name               = self.get_category_attributes_value( category_id, name_attribute[0]['attribute_id'], name_attribute[0]['backend_type'] )
-    category_description        = self.get_category_attributes_value( category_id, description_attribute[0]['attribute_id'], description_attribute[0]['backend_type'] )
+    category                    = self.where( {entity_id: category_id} ).first
+    name_attribute              = EavAttribute.select("attribute_id, backend_type").where( {attribute_code: 'name', entity_type_id: ApplicationController::CATEGORY_TYPE_ID} ).first
+    description_attribute       = EavAttribute.select("attribute_id, backend_type").where( {attribute_code: 'description', entity_type_id: ApplicationController::CATEGORY_TYPE_ID} ).first
+    category_name               = get_category_attributes_value( category_id, name_attribute['attribute_id'], name_attribute['backend_type'] )
+    category_description        = get_category_attributes_value( category_id, description_attribute['attribute_id'], description_attribute['backend_type'] )
     name                        = ""
     description                 = ""
     unless category_name.empty?
-      name                      = category_name[0]['value']
+      name                      = category_name.value
     end
 
     unless category_description.empty?
-      description               = category_description[0]['value']
+      description               = category_description.value
     end 
     
-    category[:name]             = name
-    category[:description]      = description
-    return category
+    category.name               = name
+    category.description        = description
+    category
   end
 
   def self.get_attribute_id( attribute_code )
@@ -109,14 +125,14 @@ class Category < ActiveRecord::Base
   end
 
   def self.get_children( category_id )
-    category_children           = self.find(:all, :conditions => { :parent_id => category_id.to_i })
+    category_children           = self.where({ parent_id: category_id.to_i })
     children                    = Array.new
     unless category_children.empty?
       category_children.each do | child_category |
-        children.push( child_category.entity_id  )
-        children               += self.get_children( child_category.entity_id )
+        children               << child_category.entity_id
+        children               += get_children( child_category.entity_id )
       end
     end
-    return children
+    children
   end
 end
