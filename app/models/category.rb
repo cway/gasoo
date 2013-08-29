@@ -130,10 +130,8 @@ class Category < ActiveRecord::Base
     begin
      self.transaction do 
        if parent_category
-         update_level( category.entity_id, category_params['level'], parent_category.path )
          category_params["path"]               = parent_category.path + "/" + category.entity_id.to_s
        else
-         update_level( category.entity_id, category_params['level'], '' )
          category_params["path"]               = category.entity_id.to_s
        end 
 
@@ -154,7 +152,8 @@ class Category < ActiveRecord::Base
            old_parent_category.save
          end
        end
-      
+       update_level( category.entity_id, category_params['level'], category_params["path"] )
+
        category.update_attributes( { :parent_id => category_params['parent_id'], :path => category_params['path'], :level => category_params['level'], :updated_at => DateTime.now } )
        upsert_category_attribute( name_attribute_id, category.entity_id, params[:category][:name], 'varchar' )
        upsert_category_attribute( description_attribute_id, category.entity_id, params[:category][:description], 'text' )
@@ -203,7 +202,7 @@ class Category < ActiveRecord::Base
     unless category_children.empty?
       category_children.each do | child_category |
         next_level              = category_level + 1
-        next_path               = category_path.to_s == '' ? category_id.to_s : category_path.to_s + "/" + category_id.to_s
+        next_path               = category_path.to_s + "/" + child_category.entity_id.to_s
         update_level( child_category.entity_id, next_level, next_path )
       end
     end
