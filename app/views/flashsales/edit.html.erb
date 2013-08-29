@@ -63,6 +63,6 @@
 
     <%= render 'layouts/footer' %> 
     <script language="javascript">
-       var FLASHSALES_ENTITY  = <%= raw @eventrule.to_json( :methods => [:products => { :methods => [:name, :price, :children, :entity_id] }, :product_ids] )  %>;
+       var FLASHSALES_ENTITY  = <%= raw @eventrule.to_json( :methods => [:products, :product_ids] )  %>;
     </script>	
 </div><!--/.fluid-container-->

@@ -89,8 +89,7 @@ class FlashsalesController < ApplicationController
       return 
     end 
  
-    @eventproducts                                         =  EventProduct.where( { rule_id: rule_id } )
-    @eventrule.products                                    =  @eventproducts
+    @eventrule.products                                    =  EventProduct.get_products_by_rule_id rule_id
     @eventrule.product_ids                                 =  Array.new
     @eventrule.products.each do |product|
       @eventrule.product_ids.push( product.product_id )

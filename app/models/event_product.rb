@@ -24,4 +24,17 @@ class EventProduct < ActiveRecord::Base
   
     ret_data
    end
+
+   def self.get_products_by_rule_id( rule_id )
+     products                       = Array.new
+     event_products                 = self.where( { rule_id: rule_id } )
+     event_products.each do | event_product |
+       product                      = Hash.new
+       event_product.each do | attribute, value |
+         product[attribute]         = value
+       end
+       products                    << product
+     end
+     products
+   end
 end
