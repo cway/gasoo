@@ -109,15 +109,15 @@ class FlashsalesController < ApplicationController
             children.each do |child|
               children_ids.push( child['product_id'] )
             end
-            child_name_list                                =  EventProduct.get_products_name( children_ids )
+            child_name_list                                   =  EventProduct.get_products_name( children_ids )
 
             children.each_with_index do |child, child_index|
-              children_list[child.product_id]              =  child
-              children_list[child.product_id]['name']      =  child_name_list[child['product_id']
-              children_list[child.product_id]['price']     =  child['normal_price']
-              children_list[child.product_id]['entity_id'] =  child['product_id']
+              children_list[child['product_id']]              =  child
+              children_list[child['product_id']]['name']      =  child_name_list[child['product_id']
+              children_list[child['product_id']]['price']     =  child['normal_price']
+              children_list[child['product_id']]['entity_id'] =  child['product_id']
             end
-            @eventrule.products[index]['children']         =  children_list
+            @eventrule.products[index]['children']            =  children_list
           end
         end
       rescue => err
