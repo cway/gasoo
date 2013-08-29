@@ -5,6 +5,10 @@ EcAdmin::Application.routes.draw do
   get   'attribute_groups/get_attributes'   => 'attribute_groups#get_attributes'
   get   'products/get_children'             => 'products#get_children'
   match 'image_management'                  => 'image_management#index', via: [:get, :post]
+  get   'products/fast_new'                 => 'products#fast_new'
+  post  'products/ajax_create'              => 'products#ajax_create'
+  get   'products/get_simple_products'      => 'products#get_simple_products'
+  get   'shipping/query'                    => 'shipping#query'
 
   resources  :main
   resources  :attributes
@@ -14,6 +18,7 @@ EcAdmin::Application.routes.draw do
   resources  :eventrules
   resources  :flashsales
   resources  :customers
+  resources  :sales_orders
   root :to => 'main#index'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

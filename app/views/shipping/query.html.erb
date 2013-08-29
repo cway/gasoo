@@ -1,0 +1,47 @@
+<%= render 'layouts/topbar' %>
+
+	<div class="container-fluid">
+	<div class="row-fluid">
+
+		<%= render 'layouts/leftmenu' %>
+
+		<%= render 'layouts/noscript_warning' %>
+		
+		<div id="content" class="span10">
+		<!-- content starts -->
+
+		<div>
+			<ul class="breadcrumb">
+				<li>
+					<a href="/main">主页</a> <span class="divider">/</span>
+				</li>
+				<li>
+					<a href="#">快递查询</a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="row-fluid sortable">
+			<div class="box span12">
+				<div class="box-header well" data-original-title>
+					<h2><i class="icon-picture"></i>快递查询</h2>
+					<div class="box-icon">
+					</div>
+				</div>
+				<div class="box-content">
+                                  <iframe name="kuaidi100" src="http://www.kuaidi100.com/frame/index.html" width="960" height="880" marginwidth="0" marginheight="0" hspace="0" vspace="0" frameborder="0" scrolling="no"></iframe>
+				</div>
+			</div><!--/span-->
+		
+		</div><!--/row-->
+
+
+				<!-- content ends -->
+		</div><!--/#content.span10-->
+			</div><!--/fluid-row-->
+			
+	<hr>
+    <%= render 'layouts/footer' %>
+	
+</div><!--/.fluid-container-->
+
