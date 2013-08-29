@@ -204,11 +204,25 @@ class Product < ActiveRecord::Base
       values << "( #{category_id}, #{product_id} )"
     end
     
-    res                           =  ActiveRecord::Base.connection().insert("INSERT INTO `category_product` (`category_id`, `product_id`) VALUES #{values.join(',')}") 
+    res                           = ActiveRecord::Base.connection().insert("INSERT INTO `category_product` (`category_id`, `product_id`) VALUES #{values.join(',')}") 
     return res
   end
 
   def self.update_product_attributes( product, attribute_values )
+    
+    attributes                    = get_update_attributes( attribute_values )  
+ 
+    attributes.each do |attribute|
+      if attribute["value"].class =="String" and attribute["value"].empty?
+        next
+      end
+
+      update_attribute product, attribute
+    end  
+  end
+
+  private
+  def self.get_update_attributes( attribute_values )
     attributes                          = Array.new
     attribute_values.each do |attribute_code, attribute_value|
        attribute_info                   = EavAttribute.where( {attribute_code: attribute_code, entity_type_id: ApplicationController::PRODUCT_TYPE_ID} ).first
@@ -216,49 +230,46 @@ class Product < ActiveRecord::Base
          attribute_info                 = attribute_info
          
          if attribute_value.class == Array
-            attribute_info["value"]     = attribute_value.to_json
+            attribute_info.value        = attribute_value.to_json
          else
-            attribute_info["value"]     = attribute_value
+            attribute_info.value        = attribute_value
          end
 
          attributes.push( attribute_info )
        end 
-    end 
- 
-    attributes.each do |attribute|
-      if attribute["value"].class =="String" and attribute["value"].empty?
-        next
-      end
-
-      modelEntity                 = nil
-      case attribute.backend_type
-        when "varchar"
-          modelEntity             = ProductEntityVarchar
-        when "decimal"            
-          modelEntity             = ProductEntityDecimal
-        when "int"
-          modelEntity             = ProductEntityInt
-        when "media_gallery"
-          modelEntity             = ProductEntityMediaGallery
-        when "text"
-          modelEntity             = ProductEntityText
-      end 
-
-      if modelEntity
-        entity_option             = { entity_type_id: ApplicationController::PRODUCT_TYPE_ID, attribute_id: attribute.attribute_id, entity_id: product.entity_id}
-        entity_value              = modelEntity.where( entity_option ).first
-        if entity_value
-          entity_value.update_attributes( {:value => attribute["value"] } )
-        else
-          entity_value            = modelEntity.new( entity_option )
-          entity_value.value      = attribute["value"]
-          entity_value.save
-        end
-      end
-    end  
+    end
+    attributes
   end
 
+  def self.update_attribute( product, attribute )
+    modelEntity                 = nil
+    case attribute.backend_type
+      when "varchar"
+        modelEntity             = ProductEntityVarchar
+      when "decimal"            
+        modelEntity             = ProductEntityDecimal
+      when "int"
+        modelEntity             = ProductEntityInt
+      when "media_gallery"
+        modelEntity             = ProductEntityMediaGallery
+      when "text"
+        modelEntity             = ProductEntityText
+    end 
 
+    if modelEntity
+      entity_option             = { entity_type_id: ApplicationController::PRODUCT_TYPE_ID, attribute_id: attribute.attribute_id, entity_id: product.entity_id}
+       
+      modelEntity.create_with( value: attribute.value ).find_or_create_by( entity_option )
+      # entity_value              = modelEntity.where( entity_option ).first
+      # if entity_value
+      #   entity_value.update_attributes( {:value => attribute.value } )
+      # else
+      #   entity_value            = modelEntity.new( entity_option )
+      #   entity_value.value      = attribute.value
+      #   entity_value.save
+      # end
+    end
+  end
   # def method_missing(name, *args)
   #   if name[-1] == '='
   #     nam = name.to_s[0...-1]
