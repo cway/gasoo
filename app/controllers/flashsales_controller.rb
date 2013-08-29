@@ -21,8 +21,8 @@ class FlashsalesController < ApplicationController
   
   # POST /flashsales/create
   def create 
-    flashsales                                    = JSON.parse( params[:body] )
-    products                                      = flashsales['products']
+    eventrule_info                                = JSON.parse( params[:body] )
+    products                                      = eventrule_info['products']
     from_date                                     = Time.parse(eventrule_info['from_date']).getlocal()
     end_date                                      = Time.parse(eventrule_info['end_date']).getlocal()
     begin
