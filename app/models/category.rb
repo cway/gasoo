@@ -98,13 +98,13 @@ class Category < ActiveRecord::Base
   end
 
   def self.get_attribute_id( attribute_code )
-      attribute_id              = -1
-      attribute                 = EavAttribute.select("attribute_id").where( {attribute_code: attribute_code, entity_type_id: ApplicationController::CATEGORY_TYPE_ID} ).first
+      attribute_id                              = -1
+      attribute                                 = EavAttribute.select("attribute_id").where( {attribute_code: attribute_code, entity_type_id: ApplicationController::CATEGORY_TYPE_ID} ).first
       if attribute 
-        attribute_id            = attribute['attribute_id'];
+        attribute_id                            = attribute['attribute_id'];
       end
 
-      return attribute_id
+      attribute_id
   end
 
   def self.insert_category( category, params )

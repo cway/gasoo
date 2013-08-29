@@ -24,7 +24,7 @@ class CategoriesController < ApplicationController
     begin
       category                          = Category.new( category_params )
       Category.insert_category category, params
-      redirect_to(@category, :notice => '类目创建成功.') 
+      redirect_to(category, :notice => '类目创建成功.') 
     rescue => err
       redirect_to :action => "new", :notice => err.message
     end 
