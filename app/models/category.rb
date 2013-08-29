@@ -90,7 +90,8 @@ class Category < ActiveRecord::Base
     unless category_description.empty?
       description               = category_description[0].value
     end 
-    
+
+    category.category_attributes                       = Hash.new
     category.category_attributes['name']               = name
     category.category_attributes['description']        = description
     category
