@@ -4,6 +4,5 @@
 
 class MainController < ApplicationController
   def index
-  	puts CONTROLLER_NAME
   end
 end

@@ -60,11 +60,15 @@ class ApplicationController < ActionController::Base
     model_entity.attributes
   end
 
-  def self.CONTROLLER_NAME
-    self.controller_name
-  end
-
-  def self.ACTION_NAME
-    self.action_name
+  def admin_logger( log_info, status )
+    log_entity            = {
+                              'log_info'     =>  log_info,
+                              'log_time'     =>  Time.now.to_i,
+                              'log_admin'    =>  current_user.email,
+                              'log_ip'       =>  request.remote_ip,
+                              'log_status'   =>  status,
+                              'controller'   =>  controller_name,
+                              'action_name'  =>  action_name          
+    AdminLog.create( log_entity )
   end
 end

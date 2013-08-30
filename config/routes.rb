@@ -1,5 +1,5 @@
 EcAdmin::Application.routes.draw do
-  devise_for :users
+  devise_for :users, :controllers           => { :sessions => :sessions }
   get   'flashsales/products_selector'      => 'flashsales#products_selector'
   get   'categories/get_tree'               => 'categories#get_tree'
   get   'attribute_groups/get_attributes'   => 'attribute_groups#get_attributes'
