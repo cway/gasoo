@@ -195,7 +195,7 @@ $(function () {
      ids += "]";
      $("#categories").val( ids ); 
 
-     productObj.categories = ids_arr
+     productObj.categories = ids_arr;
  
      $('input[type="checkbox"][name="selected_simple_products"]:checked').each(
          function(){
@@ -235,7 +235,7 @@ $(function () {
      ids += "]";
      $("#categories").val( ids );
 
-     productObj.categories = ids_arr
+     productObj.categories = ids_arr;
 
      $('input[type="checkbox"][name="selected_simple_products"]:checked').each(
          function(){
@@ -298,7 +298,9 @@ $(function () {
       });
      ids += "]";
 
-     productObj.categories = ids_arr
+     productObj.categories = ids_arr;
+     UpdateProductAttribute();
+     
      $.ajax({
               type: "POST",
               url: "/products/ajax_create",
