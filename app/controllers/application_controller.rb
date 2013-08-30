@@ -59,4 +59,12 @@ class ApplicationController < ActionController::Base
   def model_to_hash( model_entity )
     model_entity.attributes
   end
+
+  def self.CONTROLLER_NAME
+    self.controller_name
+  end
+
+  def self.ACTION_NAME
+    self.action_name
+  end
 end
