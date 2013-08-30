@@ -141,16 +141,15 @@ class Product < ActiveRecord::Base
     attribute_set_id                     =  product_info["attribute_set_id"]
     type_id                              =  product_info["type_id"]
     attribute_list                       =  get_attributes(ApplicationController::PRODUCT_TYPE_ID, attribute_set_id) 
-    
+    product_entity                       =  Hash.new 
+    product_entity['entity_type_id']     =  ApplicationController::PRODUCT_TYPE_ID
+    product_entity['attribute_set_id']   =  attribute_set_id
+    product_entity['type_id']            =  type_id
+    product_entity['sku']                =  product_info["sku"]
+    product                              =  self.new( product_entity )
+
     self.transaction do
-      product_entity                     =  Hash.new 
-      product_entity['entity_type_id']   =  ApplicationController::PRODUCT_TYPE_ID
-      product_entity['attribute_set_id'] =  attribute_set_id
-      product_entity['type_id']          =  type_id
-      product_entity['sku']              =  product_info["sku"]
-      product                            =  self.new( product_entity )
       product.save
-    
       attribute_types_and_value          =  Hash.new
       
       attribute_list.each do |attribute|
