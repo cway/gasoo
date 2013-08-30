@@ -7,39 +7,39 @@ class ProductsController < ApplicationController
 
   # GET /index
   def index
-    @products                    = Product.all
-    product_types                = ProductType.all_with_primary_key
-    attribute_sets               = AttributeSet.all_with_primary_key
-    attribute_values             = Product.get_index_attributes
+    @products                           =  Product.all
+    product_types                       =  ProductType.all_with_primary_key
+    attribute_sets                      =  AttributeSet.all_with_primary_key
+    attribute_values                    =  Product.get_index_attributes
  
     render 'index', :locals => { :product_types => product_types, :attribute_sets => attribute_sets, :attribute_values => attribute_values }
   end
 
   # GET /products/1
   def show
-    @product                     = Product.find(params[:id])
+    @product                            =  Product.find(params[:id])
 
-    attribute_list               = Product.get_attributes( ApplicationController::PRODUCT_TYPE_ID , @product.attribute_set_id) 
+    attribute_list                      =  Product.get_attributes( ApplicationController::PRODUCT_TYPE_ID , @product.attribute_set_id) 
   end
 
 
   #get /get_simple_products/
-  def get_simple_products
-     attribute_set_id            = params[:set].to_i
-     type_id                     = ApplicationController::SIMPLE_PRODUCT_ID
-     conditions                  = { :attribute_set_id => attribute_set_id, :type_id => type_id }
-     products                    = Product.where( conditions ).select("entity_id")
-     ids 	                       = Array.new
+  def get_simple_products 
+     attribute_set_id                   =  params[:set].to_i
+     type_id                            =  ApplicationController::SIMPLE_PRODUCT_ID
+     conditions                         =  { :attribute_set_id => attribute_set_id, :type_id => type_id }
+     products                           =  Product.where( conditions ).select("entity_id")
+     ids 	                              =  Array.new
      products.each do |product|
        ids.push( product.entity_id )
      end
 
-     attribute_values            = Product.get_simple_products_attributes( ids )
+     attribute_values                   =  Product.get_simple_products_attributes( ids )
      products.each_with_index do |product, index|
-       products[index]["name"]   = attribute_values[:name][product.entity_id]
-       products[index]["sku"]    = attribute_values[:sku][product.entity_id]
-       products[index]["price"]  = attribute_values[:price][product.entity_id]
-       products[index]["qty"]    = attribute_values[:qty][product.entity_id]
+       products[index]["name"]          =  attribute_values[:name][product.entity_id]
+       products[index]["sku"]           =  attribute_values[:sku][product.entity_id]
+       products[index]["price"]         =  attribute_values[:price][product.entity_id]
+       products[index]["qty"]           =  attribute_values[:qty][product.entity_id]
      end
      render :json               => products
   end
@@ -68,25 +68,25 @@ class ProductsController < ApplicationController
         render( "chose_configurable_attribute", :locals => {:configurable_attributes => configurable_attributes, :type => type_id, :set => attribute_set_id} )
         return
       else
-        type_id                      = ApplicationController::SIMPLE_PRODUCT_ID
+        type_id                        = ApplicationController::SIMPLE_PRODUCT_ID
       end
     end
     
-    @product                         = Product.new
+    @product                           = Product.new
     init_product_params( attribute_set_id, type_id, params )
 
-    @group_list                      = Hash.new
+    @group_list                        = Hash.new
     init_product_group_list( attribute_set_id )
  
     #init_new_product_js => true load init/new_product.js
-    @init_new_product_js             = true 
+    @init_new_product_js               = true 
     render( "new" )
   end
 
   def init_product_params( attribute_set_id, type_id, params )
-    @product.attribute_set_id        = attribute_set_id
-    @product.type_id                 = type_id
-    @product.entity_type_id          = ApplicationController::PRODUCT_TYPE_ID
+    @product.attribute_set_id          = attribute_set_id
+    @product.type_id                   = type_id
+    @product.entity_type_id            = ApplicationController::PRODUCT_TYPE_ID
 
     if @product.type_id == ApplicationController::CONFIGURABLE_PRODUCT_ID
       if params[:configurable_attributes]
@@ -94,10 +94,10 @@ class ProductsController < ApplicationController
         @product.configurable_attributes.each_with_index do | attribute_id, index |
           @product.configurable_attributes[index]    = attribute_id.to_i
         end
-        @product.required_options    = 1
-        @product.has_options         = 1
+        @product.required_options     = 1
+        @product.has_options          = 1
       else
-        @product.type_id             = ApplicationController::SIMPLE_PRODUCT_ID
+        @product.type_id              = ApplicationController::SIMPLE_PRODUCT_ID
       end
     end
   end
@@ -174,130 +174,27 @@ class ProductsController < ApplicationController
 
 
   # POST /products
-  def create
-    product_info                           =  JSON.parse( params[:body] )
-    attribute_set_id                       =  product_info["attribute_set_id"]
-    type_id                                =  product_info["type_id"]
-    attribute_list                         =  Product.get_attributes(ApplicationController::PRODUCT_TYPE_ID, attribute_set_id) 
-   
+  def create 
     begin
-      Product.transaction do
-        product_entity                     =  Hash.new 
-        product_entity['entity_type_id']   =  ApplicationController::PRODUCT_TYPE_ID
-        product_entity['attribute_set_id'] =  attribute_set_id
-        product_entity['type_id']          =  type_id
-        product_entity['sku']              =  product_info["sku"]
-        @product                           =  Product.new( product_entity )
-        @product.save
-      
-        attribute_types_and_value          =  Hash.new
-         
-        attribute_list.each do |attribute|
-          unless attribute_types_and_value.has_key? attribute.backend_type
-            attribute_types_and_value[attribute.backend_type]  = Array.new 
-          end
-
-          if product_info.has_key? attribute.attribute_code
-            insert_value                   =  Hash.new
-            insert_value['attribute_id']   =  attribute.attribute_id
-            insert_value['entity_id']      =  @product.entity_id
-            insert_value['value']          =  product_info[attribute.attribute_code]
-            attribute_types_and_value[attribute.backend_type].push( insert_value )
-          end  
-        end
-
-        if product_info.has_key? "simple_products_ids"
-          product_info["simple_products_ids"].each do |simple_product_id|
-            product_relation_params              = Hash.new
-            product_relation_params["parent_id"] = @product.entity_id
-            product_relation_params["child_id"]  = simple_product_id
-            @product_relation                    = ProductRelation.new( product_relation_params )
-            @product_relation.save
-          end   
-        end
-        
-        attribute_types_and_value.each do | type, type_values |
-          Product.insert_entity_values( type_values, type )
-        end
-       
-        categories                               = product_info["categories"]
-        unless categories.empty?
-          Product.add_categories( @product.entity_id, categories )
-        end
- 
-        if ApplicationController::CONFIGURABLE_PRODUCT_ID == @product.type_id.to_i
-          configurable_attributes                  = Array.new
-          sort                                     = 0
-          product_info["configurable_attributes"].each do | configurable_attribute_id |
-            configurable_attribute                 = Hash.new
-            configurable_attribute["product_id"]   = @product.entity_id
-            configurable_attribute["attribute_id"] = configurable_attribute_id
-            configurable_attribute["sort"]         = sort
-            sort                                  += 1
-            configurable_attributes.push( configurable_attribute )
-          end
-          ProductConfigurableAttribute.create( configurable_attributes )
-        end
-      end
-       
-      redirect_to(:action => "edit", :id => @product.entity_id, :notice => '商品创建成功.')
+      product_info                         =  JSON.parse( params[:body] )
+      product                              =  create_product( product_info )
+      redirect_to :action => "edit", :id => product.entity_id, :notice => '商品创建成功.'
     rescue => err
-      puts err
-      render :json => "创建失败"
-      #redirect_to :action => "new", :attribute_set_id => attribute_set_id, :type_id => type_id, :notice => err 
+      puts err.backtrace
+      redirect_to :action => "new", :notice => "创建失败"
     end 
   end
   
   
-  def ajax_create
-    product_info                           = JSON.parse( request.body.string )
-    attribute_set_id                       = product_info["attribute_set_id"]
-    type_id                                = product_info["type_id"]
-    attribute_list                         = Product.get_attributes(ApplicationController::PRODUCT_TYPE_ID, attribute_set_id)
-
-    begin
-      Product.transaction do
-        product_entity                     =  Hash.new
-        product_entity['entity_type_id']   =  ApplicationController::PRODUCT_TYPE_ID
-        product_entity['attribute_set_id'] =  attribute_set_id
-        product_entity['type_id']          =  type_id
-        product_entity['sku']              =  product_info["sku"]
-        @product                           =  Product.new( product_entity )
-        @product.save
-
-        attribute_types_and_value          = Hash.new
-        attribute_list.each do |attribute|
-          unless attribute_types_and_value.has_key? attribute.backend_type
-            attribute_types_and_value[attribute.backend_type]  = Array.new
-          end
-
-          if product_info.has_key? attribute.attribute_code
-            if product_info[attribute.attribute_code].class == "String" and product_info[attribute.attribute_code].empty?
-              next
-            end
-            insert_value                   =  Hash.new
-            insert_value['attribute_id']   =  attribute.attribute_id
-            insert_value['entity_id']      =  @product.entity_id
-            insert_value['value']          =  product_info[attribute.attribute_code]
-            attribute_types_and_value[attribute.backend_type].push( insert_value )
-          end
-        end
-
-        attribute_types_and_value.each do | type, type_values |
-          Product.insert_entity_values( type_values, type )
-        end
-
-        categories                         =  product_info["categories"]
-        unless categories.empty?
-          Product.add_categories( @product.entity_id, categories )
-        end
-      end
-       
-      product_info["entity_id"]            =  @product.entity_id
+  def ajax_create 
+    begin 
+      product_info                         =  JSON.parse( request.body.string )
+      product                              =  create_product( product_info )
+      product_info["entity_id"]            =  product.entity_id
       render :json                         => { :status => 1, :data => product_info }
     rescue => err
-      puts err
-      render :json                         => { :status => 0, :error_msg => err }
+      puts err.backtrace
+      render :json                         => { :status => 0, :error_msg => err.message }
     end
   end
 
