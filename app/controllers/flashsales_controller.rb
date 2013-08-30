@@ -25,6 +25,7 @@ class FlashsalesController < ApplicationController
     products                                      = eventrule_info['products']
     from_date                                     = Time.parse(eventrule_info['from_date']).getlocal()
     end_date                                      = Time.parse(eventrule_info['end_date']).getlocal()
+    logger_info                                   = "创建活动 闪购-" + from_date.strftime("%Y-%m-%d")
     begin
       Eventrule.transaction do
         eventrule_params                          = Hash.new
@@ -67,9 +68,11 @@ class FlashsalesController < ApplicationController
           end
         end
       end
+      admin_logger logger_info, SUCCESS
       redirect_to :action => 'index', :notice => '闪购创建成功'  
     rescue => err
-      redirect_to :action => 'new', :notice => err 
+      admin_logger logger_info, FAILED
+      redirect_to :action => 'new', :notice => err.message 
     end
   end
   
@@ -124,15 +127,16 @@ class FlashsalesController < ApplicationController
         puts err.backtrace
       end
     end 
-    @init_new_flashsales                                   = true;
+    @init_new_flashsales                                      = true;
   end
 
-  def update
+  def update 
     eventrule_info                                            = JSON.parse( params[:body] )
     products                                                  = eventrule_info['products']
     from_date                                                 = Time.parse(eventrule_info['from_date']).getlocal()
     end_date                                                  = Time.parse(eventrule_info['end_date']).getlocal()
     @eventrule                                                = Eventrule.find( eventrule_info["rule_id"] )
+    logger_info                                               = "更新闪购活动 " + eventrule_info["rule_id"].to_s
     begin
       Eventrule.transaction do
         @eventrule["parent_rule_id"]                          = 1
@@ -172,21 +176,24 @@ class FlashsalesController < ApplicationController
           end
         end
       end
+      admin_logger logger_info, SUCCESS
       redirect_to :action => 'index', :notice => '闪购修改成功'
     rescue => err
       puts err.backtrace
-      redirect_to :action => 'new', :notice => err
+      admin_logger logger_info, FAILED
+      redirect_to :action => 'new', :notice => err.message
     end       
   end
 
   # DELETE /flashsales/1
   def destroy
+    render :json => "暂不开放"
+    return
     @eventproduct                       = EventProduct.find(params[:id])
     @eventproduct.destroy
 
-    respond_to do |format|
-      format.html { redirect_to(flashsales_url) }
-    end
+    redirect_to(flashsales_url) }
+    
   end
 
   def products_selector

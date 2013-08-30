@@ -174,26 +174,32 @@ class ProductsController < ApplicationController
 
 
   # POST /products
-  def create 
-    begin
-      product_info                         =  JSON.parse( params[:body] )
-      product                              =  Product.create_product( product_info )
+  def create
+    product_info                           =  JSON.parse( params[:body] )
+    logger_info                            =  "创建商品 " + product_info['sku']
+    begin 
+      product                              =  Product.create_product product_info
+      admin_logger logger_info, SUCCESS
       redirect_to :action => "edit", :id => product.entity_id, :notice => '商品创建成功.'
     rescue => err
       puts err.backtrace
-      redirect_to :action => "new", :notice => "创建失败"
+      admin_logger logger_info, FAILED
+      redirect_to :action => "new", :notice => err.message
     end 
   end
   
   
-  def ajax_create 
-    begin 
-      product_info                         =  JSON.parse( request.body.string )
+  def ajax_create
+    product_info                           =  JSON.parse( request.body.string )
+    logger_info                            =  "创建商品 " + product_info['sku'] 
+    begin  
       product                              =  Product.create_product( product_info )
       product_info["entity_id"]            =  product.entity_id
+      admin_logger logger_info, SUCCESS
       render :json                         => { :status => 1, :data => product_info }
     rescue => err
       puts err.backtrace
+      admin_logger logger_info, FAILED
       render :json                         => { :status => 0, :error_msg => err.message }
     end
   end
@@ -201,6 +207,7 @@ class ProductsController < ApplicationController
   # PUT /products/1
   def update
     product_info                                  = JSON.parse( params[:body] )
+    logger_info                                   = "更新商品 " + product_info["entity_id"].to_s
     @product                                      = Product.find(product_info["entity_id"])
     attribute_list                                = Product.get_attributes(ApplicationController::PRODUCT_TYPE_ID, product_info["attribute_set_id"])
 
@@ -239,20 +246,25 @@ class ProductsController < ApplicationController
         @product.updated_at                        = Time.now
         @product.save
       end
-      redirect_to(:action => "edit", :id => @product.entity_id, :notice => '更新成功')
+      admin_logger logger_info, SUCCESS
+      redirect_to :action => "edit", :id => @product.entity_id, :notice => '更新成功'
     rescue => err
       puts err.backtrace
-      render :json  => err
+      admin_logger logger_info, FAILED
+      redirect_to :action => "edit", :id => product_info["entity_id"], :notice => err.message
     end
   end
 
 
   # DELETE /products/1
   def destroy
+    logger_info                                     = "删除商品 " + params[:id].to_s
     begin
       @product                                      = Product.find(params[:id])
       @product.update_attribute("is_active", 0);
+      admin_logger logger_info, SUCCESS
     rescue => err
+      admin_logger logger_info, FAILED
       puts err.backtrace
     end
     redirect_to(products_url)
@@ -260,13 +272,13 @@ class ProductsController < ApplicationController
 
   def get_children
     product_id                                      = params['entity_id']
-    children                                        = ProductRelation.find_all_by_parent_id( product_id )
+    children                                        = ProductRelation.find_all_by_parent_id product_id
     unless children.empty?
       children_ids                                  = Array.new
       children.each do |child|
         children_ids.push( child.child_id )
       end 
-      product_children                              = Product.get_flashsales_attributes( children_ids )
+      product_children                              = Product.get_flashsales_attributes children_ids
       render :json                                  => { :status => 1, :data => product_children }
     else
       render :json                                  => { :status => 0, :data => [] }

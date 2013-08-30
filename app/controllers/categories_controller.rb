@@ -16,16 +16,19 @@ class CategoriesController < ApplicationController
   
   # POST /categories/create 
   def create 
+    logger_info                         = "创建类目 " + params[:category]['name']
     category_params                     = Hash.new 
     category_params['parent_id']        = params[:category]['parent_id']
-    category_params['attribute_set_id'] = 2
+    category_params['attribute_set_id'] = CATEGORY_DEFAULT_SET_ID
     category_params["entity_type_id"]   = ApplicationController::CATEGORY_TYPE_ID
       
     begin
       category                          = Category.new( category_params )
       Category.insert_category category, params
-      redirect_to(category, :notice => '类目创建成功.') 
+      admin_logger logger_info, SUCCESS
+      redirect_to :action => "edit", :id    => category.entity_id, :notice => '类目创建成功.'
     rescue => err
+      admin_logger logger_info, FAILED
       redirect_to :action => "new", :notice => err.message
     end 
   end
@@ -53,23 +56,29 @@ class CategoriesController < ApplicationController
 
   # PUT /categories/1 
   def update
+    logger_info                          = "更新类目 " + params[:id].to_s
     begin
-      @category                          = Category.find( params[:id] )
-      Category.update_category @category, params
-      redirect_to :action => 'edit', :id => @category.entity_id, :notice => '类目更新成功.'
+      category                           = Category.find( params[:id] )
+      Category.update_category category, params
+      admin_logger logger_info, SUCCESS
+      redirect_to :action => 'edit', :id => category.entity_id, :notice => '类目更新成功.'
     rescue => err
-      redirect_to :action => 'index', :notice => err.message
+      admin_logger logger_info, FAILED
+      redirect_to :action => 'edit', :id => category.entity_id, :notice => err.message
     end
   end
   
   def destroy
+    logger_info                          = "删除类目 " + params[:id].to_s
     begin
-      @category             = Category.find(params[:id])
-      @category.update_attribute("is_active", 0);
+      category                           = Category.find(params[:id])
+      category.update_attribute("is_active", 0);
+      admin_logger logger_info, SUCCESS
     rescue => err
+      admin_logger logger_info, FAILED
       puts err.backtrace
     end
-    redirect_to(categories_url)
+    redirect_to categories_url
   end
   
   # /categories/get_tree.json

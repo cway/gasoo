@@ -26,15 +26,19 @@ class AttributesController < ApplicationController
   end
   
   # POST /attributrs/create
-  def create 
+  def create
+    logger_info                               =   "创建属性 " + params[:attribute]['attribute_code']
     begin
-      @attribute                              =   EavAttribute.create_eav_attribute( params )
-      redirect_to :action => 'show', :id => @attribute.id, :notice => '创建属性成功'
+      attribute                               =   EavAttribute.create_eav_attribute( params )
+      admin_logger logger_info, SUCCESS
+      redirect_to :action => 'edit', :id => attribute.id, :notice => '创建属性成功'
     rescue ActiveRecord::RecordNotUnique => err
-      render :json => "该属性已存在"
+      admin_logger logger_info, FAILED
+      redirect_to :action => "new",  :notice => "该属性已存在"
     rescue => err
       puts err.backtrace
-      redirect_to :action => "new"
+      admin_logger logger_info, FAILED
+      redirect_to :action => "new",  :notice => err.message
     end
   end
  
@@ -47,13 +51,16 @@ class AttributesController < ApplicationController
   end
 
 
-  def update 
+  def update
+    logger_info                               =   "更新属性 " + params[:id].to_s
     begin
-      @attribute                            =   EavAttribute.update_eav_attribute( params ) 
-      redirect_to :action => 'show', :id => @attribute.id, :notice => '修改属性成功'
+      attribute                               =   EavAttribute.update_eav_attribute( params ) 
+      admin_logger logger_info, SUCCESS
+      redirect_to :action => 'edit', :id => attribute.id, :notice => '修改属性成功'
     rescue => err
       puts err.backtrace
-      redirect_to :action => "edit", :id => params[:id]
+      admin_logger logger_info, FAILED
+      redirect_to :action => "edit", :id => params[:id],  :notice => err.message  
     end
   end
   

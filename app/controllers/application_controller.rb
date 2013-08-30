@@ -26,6 +26,11 @@ class ApplicationController < ActionController::Base
   SIMPLE_PRODUCT_ID       = 3
   ACTIVE                  = 1
 
+  CATEGORY_DEFAULT_SET_ID = 2
+
+  SUCCESS                 = 1
+  FAILED                  = 0
+
   ATTRIBUTE_INPUT_TYPE    = { 
                                "text"        => "文本框(单行)",
                                "password"    => "密码",
@@ -56,6 +61,8 @@ class ApplicationController < ActionController::Base
                                1             => "是"
                             }
 
+
+
   def model_to_hash( model_entity )
     model_entity.attributes
   end
@@ -68,7 +75,8 @@ class ApplicationController < ActionController::Base
                               'log_ip'       =>  request.remote_ip,
                               'log_status'   =>  status,
                               'controller'   =>  controller_name,
-                              'action_name'  =>  action_name          
+                              'action'       =>  action_name   
+                            }       
     AdminLog.create( log_entity )
   end
 end
