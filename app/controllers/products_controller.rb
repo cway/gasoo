@@ -177,7 +177,7 @@ class ProductsController < ApplicationController
   def create 
     begin
       product_info                         =  JSON.parse( params[:body] )
-      product                              =  create_product( product_info )
+      product                              =  Product.create_product( product_info )
       redirect_to :action => "edit", :id => product.entity_id, :notice => '商品创建成功.'
     rescue => err
       puts err.backtrace
@@ -189,7 +189,7 @@ class ProductsController < ApplicationController
   def ajax_create 
     begin 
       product_info                         =  JSON.parse( request.body.string )
-      product                              =  create_product( product_info )
+      product                              =  Product.create_product( product_info )
       product_info["entity_id"]            =  product.entity_id
       render :json                         => { :status => 1, :data => product_info }
     rescue => err
