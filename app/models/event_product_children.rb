@@ -21,7 +21,7 @@ class EventProductChildren < ActiveRecord::Base
     products 
   end 
 
-  def update_event_product_children ( event_product_id, event_product_children )
+  def self.update_event_product_children ( event_product_id, event_product_children )
     self.where( :parent_event_product_id => event_product_id ).delete_all
     product_children                                  = Array.new
     event_product_children.each do |child_id, child_product|
