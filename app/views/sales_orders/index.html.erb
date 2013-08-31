@@ -48,10 +48,10 @@
 							<% @salesOrders.each do |salesOrder| %>
 							<tr>
 								<td><%= salesOrder.entity_id %></td>
-								<td class="center"><%= salesOrder.created_at %></td>
+								<td class="center"><%= salesOrder.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
 								<td class="center"><%= salesOrder.customer_name %></td>
 								<td class="center"><%= salesOrder.grand_total %></td>
-								<td class="center"><%= status[salesOrder.status] %></td>
+								<td class="center"><%= status[salesOrder.status.to_i] %></td>
 								<td class="center">
 									<a class="btn btn-success" href="#">
 										<i class="icon-zoom-in icon-white"></i>  
