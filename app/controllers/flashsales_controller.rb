@@ -98,7 +98,7 @@ class FlashsalesController < ApplicationController
     rescue => err
       puts err.backtrace
       admin_logger logger_info, FAILED
-      redirect_to :action => 'new', :notice => err.message
+      redirect_to :action => 'edit', :id => eventrule_info["rule_id"], :notice => err.message
     end       
   end
 
