@@ -21,53 +21,10 @@ class FlashsalesController < ApplicationController
   
   # POST /flashsales/create
   def create 
-    eventrule_info                                = JSON.parse( params[:body] )
-    products                                      = eventrule_info['products']
-    from_date                                     = Time.parse(eventrule_info['from_date']).getlocal()
-    end_date                                      = Time.parse(eventrule_info['end_date']).getlocal()
-    logger_info                                   = "创建活动 闪购-" + from_date.strftime("%Y-%m-%d")
+    eventrule_info                                = JSON.parse( params[:body] ) 
+    logger_info                                   = "创建活动 闪购-" + Time.parse(eventrule_info['from_date']).getlocal().strftime("%Y-%m-%d")
     begin
-      Eventrule.transaction do
-        eventrule_params                          = Hash.new
-        eventrule_params["parent_rule_id"]        = 1
-        eventrule_params["name"]                  = "闪购-" + from_date.strftime("%Y-%m-%d")
-        eventrule_params["description"]           = "杭州大厦-闪购"+ from_date.strftime("%Y-%m-%d")
-        eventrule_params["from_date"]             = from_date.strftime("%Y-%m-%d %H:%M:%S")
-        eventrule_params["end_date"]              = end_date.strftime("%Y-%m-%d %H:%M:%S")
-        eventrule_params["is_active"]             = 1 
-        @eventrule                                = Eventrule.new( eventrule_params )
-        @eventrule.save 
-        products.each do |product|
-          eventproduct_params                     = Hash.new
-          eventproduct_params[:rule_id]           = @eventrule.rule_id
-          eventproduct_params[:action_operator]   = 'by_price' 
-          eventproduct_params[:product_id]        = product["product_id"]
-          eventproduct_params[:from_date]         = from_date.strftime("%Y-%m-%d %H:%M:%S")
-          eventproduct_params[:end_date]          = end_date.strftime("%Y-%m-%d %H:%M:%S")
-          eventproduct_params[:rule_price]        = product["rule_price"]
-          eventproduct_params[:normal_price]      = product["price"]
-          eventproduct_params[:qty]               = product["qty"]        
-          @eventproduct                           = EventProduct.new(eventproduct_params)
-          @eventproduct.save
-
-          if product.has_key? "children"
-            EventProductChildren.where( :parent_event_product_id => @eventproduct.event_product_id ).delete_all
-            product_children                                  = Array.new
-            product["children"].each do |child_id, child_product|
-              child_product_param                             = Hash.new
-              child_product_param['parent_event_product_id']  = @eventproduct.event_product_id
-              child_product_param['product_id']               = child_product['entity_id']
-              child_product_param['rule_price']               = child_product['rule_price']
-              child_product_param['normal_price']             = child_product['price']
-              child_product_param['qty']                      = child_product['qty']
-              product_children.push( child_product_param )
-            end
-            unless product_children.empty?
-              EventProductChildren.create( product_children )
-            end
-          end
-        end
-      end
+      Eventrule.create_eventrule eventrule_info
       admin_logger logger_info, SUCCESS
       redirect_to :action => 'index', :notice => '闪购创建成功'  
     rescue => err

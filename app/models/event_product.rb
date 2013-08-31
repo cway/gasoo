@@ -39,4 +39,22 @@ class EventProduct < ActiveRecord::Base
      end
      products
    end
+
+   def self.create_event_products( product, eventrule)
+     eventproduct_params                     = Hash.new
+     eventproduct_params[:rule_id]           = eventrule.rule_id
+     eventproduct_params[:action_operator]   = 'by_price' 
+     eventproduct_params[:product_id]        = product["product_id"]
+     eventproduct_params[:from_date]         = eventrule.from_date
+     eventproduct_params[:end_date]          = eventrule.end_date
+     eventproduct_params[:rule_price]        = product["rule_price"]
+     eventproduct_params[:normal_price]      = product["price"]
+     eventproduct_params[:qty]               = product["qty"]        
+     eventproduct                            = EventProduct.new(eventproduct_params)
+     eventproduct.save
+
+     if product.has_key? "children"
+       EventProductChildren.update_event_product_children eventproduct.event_product_id, product["children"]
+     end
+   end
 end

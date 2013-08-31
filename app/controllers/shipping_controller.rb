@@ -9,4 +9,7 @@ class ShippingController < ApplicationController
     render "query"
   end
 
+  def add_order_shipping
+    
+  end
 end
