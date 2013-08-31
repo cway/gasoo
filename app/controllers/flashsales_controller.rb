@@ -89,50 +89,10 @@ class FlashsalesController < ApplicationController
 
   def update 
     eventrule_info                                            = JSON.parse( params[:body] )
-    products                                                  = eventrule_info['products']
-    from_date                                                 = Time.parse(eventrule_info['from_date']).getlocal()
-    end_date                                                  = Time.parse(eventrule_info['end_date']).getlocal()
-    @eventrule                                                = Eventrule.find( eventrule_info["rule_id"] )
+    eventrule                                                 = Eventrule.find( eventrule_info["rule_id"] )
     logger_info                                               = "更新闪购活动 " + eventrule_info["rule_id"].to_s
     begin
-      Eventrule.transaction do
-        @eventrule["parent_rule_id"]                          = 1
-        @eventrule["name"]                                    = "闪购-" + from_date.strftime("%Y-%m-%d")
-        @eventrule["description"]                             = "杭州大厦闪购-"+ from_date.strftime("%Y-%m-%d")
-        @eventrule["from_date"]                               = from_date.strftime("%Y-%m-%d %H:%M:%S")
-        @eventrule["end_date"]                                = end_date.strftime("%Y-%m-%d %H:%M:%S")
-        @eventrule["is_active"]                               = 1
-        @eventrule.save
-        EventProduct.where( :rule_id => @eventrule.rule_id ).delete_all
-        products.each do |product|
-          @eventproduct                                       = EventProduct.new
-          @eventproduct["rule_id"]                            = @eventrule.rule_id
-          @eventproduct["action_operator"]                    = 'by_price'
-          @eventproduct["product_id"]                         = product["product_id"]
-          @eventproduct["from_date"]                          = from_date.strftime("%Y-%m-%d %H:%M:%S")
-          @eventproduct["end_date"]                           = end_date.strftime("%Y-%m-%d %H:%M:%S")
-          @eventproduct["rule_price"]                         = product["rule_price"]
-          @eventproduct["normal_price"]                       = product["price"]
-          @eventproduct["qty"]                                = product["qty"]
-          @eventproduct.save 
-          if product.has_key? "children"
-            EventProductChildren.where( :parent_event_product_id => @eventproduct.event_product_id ).delete_all
-            product_children                                  = Array.new
-            product["children"].each do |child_id, child_product|
-              child_product_param                             = Hash.new
-              child_product_param['parent_event_product_id']  = @eventproduct.event_product_id
-              child_product_param['product_id']               = child_product['entity_id']
-              child_product_param['rule_price']               = child_product['rule_price']
-              child_product_param['normal_price']             = child_product['price']
-              child_product_param['qty']                      = child_product['qty']
-              product_children.push( child_product_param )
-            end
-            unless product_children.empty?
-              EventProductChildren.create( product_children )
-            end
-          end
-        end
-      end
+      Eventrule.update_eventrule eventrule, eventrule_info
       admin_logger logger_info, SUCCESS
       redirect_to :action => 'index', :notice => '闪购修改成功'
     rescue => err

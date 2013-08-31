@@ -31,6 +31,29 @@ class Eventrule < ActiveRecord::Base
 	 end
    end
 
+   def self.update_eventrule( eventrule, eventrule_info )
+   	 verify_params eventrule_info, 'products'
+   	 verify_params eventrule_info, 'from_date'
+   	 verify_params eventrule_info, 'end_date'
+
+   	 products                                    = eventrule_info['products']
+   	 from_date                                   = Time.parse(eventrule_info['from_date']).getlocal()
+     end_date                                    = Time.parse(eventrule_info['end_date']).getlocal()
+     self.transaction do
+        eventrule["parent_rule_id"]              = 1
+        eventrule["name"]                        = "闪购-" + from_date.strftime("%Y-%m-%d")
+        eventrule["description"]                 = "杭州大厦闪购-"+ from_date.strftime("%Y-%m-%d")
+        eventrule["from_date"]                   = from_date.strftime("%Y-%m-%d %H:%M:%S")
+        eventrule["end_date"]                    = end_date.strftime("%Y-%m-%d %H:%M:%S")
+        eventrule["is_active"]                   = ApplicationController::ACTIVE
+        eventrule.save
+        EventProduct.where( :rule_id => eventrule.rule_id ).delete_all
+        products.each do |product|
+          EventProduct.create_event_product product, eventrule
+        end
+     end
+   end
+
    def self.verify_params( params, key )
     unless params.has_key? key
       raise ArgumentError, "no params named #{key}" 
