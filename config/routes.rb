@@ -9,7 +9,7 @@ EcAdmin::Application.routes.draw do
   post  'products/ajax_create'              => 'products#ajax_create'
   get   'products/get_simple_products'      => 'products#get_simple_products'
   get   'shipping/query'                    => 'shipping#query'
-
+  get   'test/get_data_test'                => 'test#get_data_test'
   resources  :main
   resources  :attributes
   resources  :attribute_sets
@@ -19,6 +19,7 @@ EcAdmin::Application.routes.draw do
   resources  :flashsales
   resources  :customers
   resources  :sales_orders
+  resources  :test
   root :to => 'main#index'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
