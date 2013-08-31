@@ -43,7 +43,7 @@
 								  <th>状态</th>
 								  <th>操作</th>
 							  </tr>
-						  </thead>   
+						  </thead>
 						  <tbody>
 							<% @salesOrders.each do |salesOrder| %>
 							<tr>
@@ -57,6 +57,12 @@
 										<i class="icon-zoom-in icon-white"></i>  
 										查看                                            
 									</a>
+									<% if salesOrder.status.to_i == 5 %>
+									<a class="btn btn-success" href="#">
+										<i class="icon-zoom-in icon-white"></i>  
+										发货                                            
+									</a>
+									<% end %>
 								</td>
 							</tr>
                             <% end %>
