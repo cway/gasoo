@@ -149,8 +149,7 @@ class FlashsalesController < ApplicationController
     @eventproduct                       = EventProduct.find(params[:id])
     @eventproduct.destroy
 
-    redirect_to(flashsales_url) }
-    
+    redirect_to flashsales_url
   end
 
   def products_selector
