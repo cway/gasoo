@@ -5,7 +5,7 @@ class SalesOrderStatus < ActiveRecord::Base
   #attr_accessible :entity_id, :status, :state, :customer_id, :grand_total, :created_at
   self.table_name = "sales_order_status"
 
-  def all_with_status_id
+  def self.all_with_status_id
     status        = SalesOrderStatus.all
     status_hash   = Hash.new
 
