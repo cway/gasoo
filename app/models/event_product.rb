@@ -40,7 +40,7 @@ class EventProduct < ActiveRecord::Base
      products
    end
 
-   def self.create_event_products( product, eventrule)
+   def self.create_event_product( product, eventrule)
      eventproduct_params                     = Hash.new
      eventproduct_params[:rule_id]           = eventrule.rule_id
      eventproduct_params[:action_operator]   = 'by_price' 
