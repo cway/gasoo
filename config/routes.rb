@@ -10,6 +10,7 @@ EcAdmin::Application.routes.draw do
   get   'products/get_simple_products'      => 'products#get_simple_products'
   get   'shipping/query'                    => 'shipping#query'
   get   'test/get_data_test'                => 'test#get_data_test'
+  get   'sales_orders/deliver'              => 'sales_orders/deliver'
   resources  :main
   resources  :attributes
   resources  :attribute_sets
