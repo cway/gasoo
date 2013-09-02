@@ -4,7 +4,7 @@
 module SalesOrdersHelper 
 
   def get_shipping_address( shipping_id ) 
-    shipping_address      =    SalesOrdersAddress.where({entity_id: shipping_id}).first
+    shipping_address      =    SalesOrderAddress.where({entity_id: shipping_id}).first
     if shipping_address
       "详细地址: " << shipping_address.province << " " << shipping_address.city << " " << shipping_address.district << " " << shipping_address.street << ", 收件人: "  << shipping_address.addressee << ", 电话: " << shipping_address.telephone << ", 邮编: " << shipping_address.postcode
     else
