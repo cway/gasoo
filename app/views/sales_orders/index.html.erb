@@ -58,7 +58,7 @@
 										查看                                            
 									</a>
 									<% if salesOrder.status.to_i == 5 %>
-									<a class="btn btn-primary" href="#">
+									<a class="btn btn-primary" href="/sales_orders/<%= salesOrder.entity_id  %>/deliver">
 										发货                                            
 									</a>
 									<% end %>
