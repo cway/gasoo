@@ -1,5 +1,7 @@
 <form accept-charset="UTF-8" action="/sales_orders/<%= @salesOrder.entity_id %>/create_shipping" class="form-horizontal" id="add_shipping" method="post">
 <fieldset>
+<input name="order_id" type="hidden" value="<%= @salesOrder.entity_id %>" />
+<input name="address_id" type="hidden" value="<%= @salesOrder.shipping_address_id %>" />
 <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
 <div class="control-group">
 	<label class="control-label" for="from-date">订单号</label>
@@ -16,7 +18,7 @@
 <div class="control-group">
 	<label class="control-label" for="end-date">快递公司</label>
 	<div class="controls">
-		<select id="order_deliver_company" name="salesOrder[deliver_company]" data-rel="chosen">
+		<select id="order_deliver_company" name="deliver_company" data-rel="chosen">
 		  <% @deliver_companies.each do |deliver_company| %>
 			<option value="<%= deliver_company.company_id %>"><%= deliver_company.company_name %></option>
 		  <% end %>
@@ -26,7 +28,7 @@
 <div class="control-group">
 	<label class="control-label" for="end-date">物流单号</label>
 	<div class="controls">
-		<input type="text" name="salesOrder[shipping_id]" class = "input-xlarge" id = "shipping_id" />
+		<input type="text" name="shipping_id" class = "input-xlarge" id = "shipping_id" />
 	</div>
 </div> 
 <div class="form-actions">

@@ -1,7 +1,7 @@
 #encoding: utf-8
 #author cway 2013-07-18
 
-module SalesOrdersHelper 
+module SalesOrdersHelper
 
   def get_shipping_address( shipping_id ) 
     shipping_address      =    SalesOrderAddress.where({entity_id: shipping_id}).first

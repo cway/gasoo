@@ -61,6 +61,9 @@ class ApplicationController < ActionController::Base
                                1             => "是"
                             }
 
+  ORDER_STATUS            = {
+                               'delivering'  => 9
+                            }
 
 
   def model_to_hash( model_entity )
@@ -79,4 +82,13 @@ class ApplicationController < ActionController::Base
                             }       
     AdminLog.create( log_entity )
   end
+
+  def verify_required_params( params, required = [] )
+    required.each do | required_key |
+      unless params.has_key? required_key
+        raise ArgumentError, "未定义属性 #{required_key}"  
+      end
+    end
+  end
+
 end
