@@ -16,7 +16,7 @@ class ProductsController < ApplicationController
   end
 
   def list
-    render :json => {sEcho: params[:sEcho], iTotalRecords: 1, iTotalDisplayRecords: 1, aaData: [1,1,1,1,1,1,1 ]}
+    render :json => {sEcho: params[:sEcho], iTotalRecords: 1, iTotalDisplayRecords: 1, aaData: [ {'abc', 'abc',' abc', 'abc', 'abc', 'abc', 'abc' } ]}
   end
 
   # GET /products/1
