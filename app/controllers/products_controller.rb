@@ -11,7 +11,7 @@ class ProductsController < ApplicationController
     product_types                       =  ProductType.all_with_primary_key
     attribute_sets                      =  AttributeSet.all_with_primary_key
     attribute_values                    =  Product.get_index_attributes
- 
+    @products_index_js                  =  true
     render 'index', :locals => { :product_types => product_types, :attribute_sets => attribute_sets, :attribute_values => attribute_values }
   end
 

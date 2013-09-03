@@ -37,6 +37,11 @@
 <%= javascript_include_tag "init/attribute-set" %> 
 <% end %>
 
+<!-- products_list init js -->
+<% if defined? @products_index_js %>
+<%= javascript_include_tag "init/products_index" %> 
+<% end %>
+
 <!-- new-product init js -->
 <% if defined? @init_new_product_js %>
 <%= javascript_include_tag "init/new-product" %> 
