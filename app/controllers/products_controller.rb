@@ -2,9 +2,7 @@
 #author cway 2013-07-09
 
 class ProductsController < ApplicationController
-  
-
-
+   
   # GET /index
   def index
     @products                           =  Product.all
@@ -16,7 +14,26 @@ class ProductsController < ApplicationController
   end
 
   def list
-    render :json => {sEcho: params[:sEcho], iTotalRecords: 1, iTotalDisplayRecords: 1, aaData: [ {'abc', 'abc',' abc', 'abc', 'abc', 'abc', 'abc' } ]}
+    start                               =  params[:iDisplayStart]
+    length                              =  params[:iDisplayLength]
+
+    @products                           =  Product.offset( start ).limit( length )
+    product_types                       =  ProductType.all_with_primary_key
+    attribute_sets                      =  AttributeSet.all_with_primary_key
+    attribute_values                    =  Product.get_index_attributes
+    products_list                       =  Array.new
+    @products.each do |product|
+      product_entity                    = [attribute_values[:name][product.entity_id], 
+                                           product_types[product.type_id.to_i], 
+                                           attribute_sets[product.attribute_set_id],
+                                           attribute_values[:price][product.entity_id]
+                                           attribute_values[:qty][product.entity_id],
+                                           "<a class=\"btn btn-info\" href=\"/products/<%= product.entity_id %>/edit\"><i class=\"icon-edit icon-white\"></i>编辑</a><a class=\"btn btn-danger\" href=\"/products/<%= product.entity_id %>\" data-confirm=\"确认删除?\" data-method=\"delete\" rel=\"nofollow\"><i class=\"icon-trash icon-white\"></i>删除</a>"
+                                          ]
+      products_list << product_entity
+    end
+    
+    render :json => {sEcho: params[:sEcho], iTotalRecords: products_list.length, iTotalDisplayRecords: products_list.length, aaData: products_list.length}
   end
 
   # GET /products/1
