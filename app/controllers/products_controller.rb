@@ -33,7 +33,7 @@ class ProductsController < ApplicationController
       products_list << product_entity
     end
     
-    render :json => {sEcho: params[:sEcho], iTotalRecords: products_list.length, iTotalDisplayRecords: products_list.length, aaData: products_list.length}
+    render :json => {sEcho: params[:sEcho], iTotalRecords: products_list.length, iTotalDisplayRecords: products_list.length, aaData: products_list}
   end
 
   # GET /products/1
