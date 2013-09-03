@@ -12,6 +12,7 @@ EcAdmin::Application.routes.draw do
   get   'test/get_data_test'                => 'test#get_data_test'
   get   'sales_orders/:id/shipping'         => 'sales_orders#shipping'
   post  'sales_orders/:id/create_shipping'  => 'sales_orders#create_shipping'
+  get   'products/list'                     => 'products#list'
   resources  :main
   resources  :attributes
   resources  :attribute_sets

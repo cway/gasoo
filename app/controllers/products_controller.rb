@@ -15,6 +15,10 @@ class ProductsController < ApplicationController
     render 'index', :locals => { :product_types => product_types, :attribute_sets => attribute_sets, :attribute_values => attribute_values }
   end
 
+  def list
+    render :json => {sEcho: params[:sEcho], iTotalRecords: 1, :iTotalDisplayRecords: 1, aaData : [1,1,1,1,1,1,1 ]}
+  end
+
   # GET /products/1
   def show
     @product                            =  Product.find(params[:id])

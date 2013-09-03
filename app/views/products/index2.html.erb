@@ -33,7 +33,7 @@
 					</div>
 				</div>
 				<div class="box-content">
-					  	<table id="products_list_table" class="table table-striped table-bordered bootstrap-datatable">
+					  	<table id="products_list_table" class="table table-striped table-bordered bootstrap-datatable datatable">
 						  <thead>
 							  <tr>
 								  <th>产品id</th>
@@ -46,6 +46,26 @@
 							  </tr>
 						  </thead>   
 						  <tbody>
+							<% @products.each do |product| %>
+							<tr>
+								<td><%= product.entity_id %></td>
+								<td class="center"><%= attribute_values[:name][product.entity_id] %></td>
+								<td class="center"><%= product_types[product.type_id.to_i] %></td>
+								<td class="center"><%= attribute_sets[product.attribute_set_id] %></td>
+								<td class="center"><%= attribute_values[:price][product.entity_id] %></td>
+								<td class="center"><%= attribute_values[:qty][product.entity_id] %></td>
+								<td class="center">
+									<a class="btn btn-info" href="/products/<%= product.entity_id %>/edit">
+										<i class="icon-edit icon-white"></i>  
+										编辑                                            
+									</a>
+									<a class="btn btn-danger" href="/products/<%= product.entity_id %>" data-confirm="确认删除?" data-method="delete" rel="nofollow">
+										<i class="icon-trash icon-white"></i> 
+										删除
+									</a>
+								</td>
+							</tr>
+                                                        <% end %>
 						  </tbody>
 					  </table>
 					  <br />
