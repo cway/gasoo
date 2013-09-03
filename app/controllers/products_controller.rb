@@ -23,7 +23,9 @@ class ProductsController < ApplicationController
     attribute_values                    =  Product.get_index_attributes
     products_list                       =  Array.new
     @products.each do |product|
-      product_entity                    = [attribute_values[:name][product.entity_id], 
+      product_entity                    = [
+                                           product.entity_id,
+                                           attribute_values[:name][product.entity_id], 
                                            product_types[product.type_id.to_i], 
                                            attribute_sets[product.attribute_set_id],
                                            attribute_values[:price][product.entity_id],
