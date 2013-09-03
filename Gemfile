@@ -7,7 +7,7 @@ gem 'rails', '4.0.0'
 gem 'mysql2'
 gem 'devise'
 gem 'faraday'
-
+gem 'em-synchrony', :require => ['em-synchrony', 'em-synchrony/mysql2', 'em-synchrony/activerecord']
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'
 
