@@ -202,7 +202,7 @@ class ProductsController < ApplicationController
     begin
       admin_logger logger_info, SUCCESS
       product                              =  internal_api '/product', params[:body]
-      redirect_to :action => "edit", :id => product.entity_id, :notice => '商品创建成功.'
+      redirect_to :action => "edit", :id => product['entity_id'], :notice => '商品创建成功.'
     rescue => err
       puts err.backtrace
       admin_logger logger_info, FAILED
