@@ -170,7 +170,7 @@ class ProductsController < ApplicationController
 
   # GET /products/1/edit
   def edit 
-    @product                                                    = internal_api( "/products/#{params[:id]}", { id: params[:id] }, "GET" )
+    @product                                                    = internal_api( "/product/#{params[:id]}", { id: params[:id] }, "GET" )
     @group_list                                                 = Hash.new
     init_product_group_list( @product['attribute_set_id'] )
 
