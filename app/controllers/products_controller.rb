@@ -241,7 +241,7 @@ class ProductsController < ApplicationController
     product_info                                   = JSON.parse( params[:body] )
     logger_info                                    = "更新商品 " + product_info["entity_id"].to_s
     begin
-      product                                        =  internal_api( '/product', params[:body], "PUT" )
+      product                                        =  internal_api( "/product/#{product_info['entity_id']}", params[:body], "PUT" )
     # @product                                       = Product.find(product_info["entity_id"])
     # attribute_list                                 = Product.get_attributes(ApplicationController::PRODUCT_TYPE_ID, product_info["attribute_set_id"])
 
