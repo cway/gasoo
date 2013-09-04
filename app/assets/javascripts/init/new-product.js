@@ -5,12 +5,7 @@ function ProductObj( entity )
    {
      this[entity_code]                   = entity[entity_code]; 
    } 
-
-   if( this.hasOwnProperty( "image" ) )
-   {
-     this["image"]                          = JSON.parse( this["image"] );
-   }
-
+  
    console.log( this );
    return
 }
