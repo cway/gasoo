@@ -281,11 +281,11 @@ class ProductsController < ApplicationController
     #     @product.save
     #   end
       admin_logger logger_info, SUCCESS
-      redirect_to :action => "edit", :id => product['entity_id'], :notice => '更新成功'
+      redirect_to :action => "edit", :id => product['id'], :notice => '更新成功'
     rescue => err
       puts err.backtrace
       admin_logger logger_info, FAILED
-      redirect_to :action => "edit", :id => product_info["entity_id"], :notice => err.message
+      redirect_to :action => "edit", :id => product_info["id"], :notice => err.message
     end
   end
 
