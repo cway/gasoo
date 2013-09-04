@@ -53,14 +53,19 @@ class ProductsController < ApplicationController
        ids.push( product.entity_id )
      end
 
-     attribute_values                   =  Product.get_simple_products_attributes( ids )
-     products.each_with_index do |product, index|
-       products[index]["name"]          =  attribute_values[:name][product.entity_id]
-       products[index]["sku"]           =  attribute_values[:sku][product.entity_id]
-       products[index]["price"]         =  attribute_values[:price][product.entity_id]
-       products[index]["qty"]           =  attribute_values[:qty][product.entity_id]
+     products                           =  internal_api( '/products', { ids: product_ids.join(",") }, "GET" )
+     ret_products                       =  Array.new 
+     products.each do |product_id, product|
+       tmp_product                      = 
+                                          {
+                                            :name    => product['name'],
+                                            :sku     => product['sku'],
+                                            :price   => product['price'],
+                                            :qty     => product['qty']
+                                          }
+       ret_products                     << tmp_product
      end
-     render :json               => products
+     render :json               => ret_products
   end
 
     
@@ -169,7 +174,8 @@ class ProductsController < ApplicationController
     @product                                                    = internal_api( "/product/#{params[:id]}", { id: params[:id] }, "GET" )
     @group_list                                                 = Hash.new
     product                                                     = Product.select("attribute_set_id").find( params[:id] )
-    init_product_group_list( product.attribute_set_id )
+    @product['attribute_set_id']                                = product.attribute_set_id
+    init_product_group_list( @product['attribute_set_id'] )
 
     # if @product.type_id.to_i == ApplicationController::CONFIGURABLE_PRODUCT_ID
     #   children                                                  = ProductRelation.find(:all, :conditions => [ "parent_id = #{@product.entity_id}" ], :select => "child_id" )
