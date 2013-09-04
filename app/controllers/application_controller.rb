@@ -111,7 +111,6 @@ class ApplicationController < ActionController::Base
 
     if response
       response_body                          = JSON.parse response.body
-      puts response.body
       if response_body['status'] != 1
         raise response_body['err_msg']
       end

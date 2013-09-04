@@ -57,9 +57,30 @@ module ProductsHelper
      products.each do |product|
        product_ids.push( product.entity_id )
      end
+ 
+     conn = Faraday.new(:url => "http://192.168.1.110:12581" ) do |faraday|
+      faraday.request  :url_encoded              # form-encode POST params
+      faraday.response :logger                   # log requests to STDOUT
+      faraday.adapter  Faraday.default_adapter   # make requests with Net::HTTP
+      #faraday.adapter  :em_synchrony            # fiber aware http client
+     end
 
-     products                    =  ApplicationController::internal_api( '/products', { ids: product_ids.join(",") }, "GET" )
-       
+     response = conn.get do |request|
+       request.url                          '/products'
+       request.params                       = { ids: product_ids.join(",") }
+     end
+
+     if response
+       response_body                        = JSON.parse response.body
+       if response_body['status'] != 1
+         raise response_body['err_msg']
+       end 
+     else
+       raise "请求失败"
+     end
+
+     product                                = response_body['data']
+
      if product['configurable_children']
        products.each do |tmp_product_id, tmp_product|
          configurable_str         += "<tr><td class='center'><div class='input-prepend input-append'><input type=\"checkbox\" ";
