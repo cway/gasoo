@@ -19,7 +19,7 @@ class ProductsController < ApplicationController
       product_ids  << product_entity.entity_id
     end
     products                            =  internal_api( '/products', { ids: product_ids.join(",") }, "GET" )
-
+    products_list                       =  Array.new
     products.each do |product_id, product|
       product_entity                    = [
                                            product_id,
