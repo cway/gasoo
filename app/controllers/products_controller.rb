@@ -240,7 +240,8 @@ class ProductsController < ApplicationController
   def update
     product_info                                   = JSON.parse( params[:body] )
     logger_info                                    = "更新商品 " + product_info["entity_id"].to_s
-    product                                        =  internal_api( '/product', params[:body], "PUT" )
+    begin
+      product                                        =  internal_api( '/product', params[:body], "PUT" )
     # @product                                       = Product.find(product_info["entity_id"])
     # attribute_list                                 = Product.get_attributes(ApplicationController::PRODUCT_TYPE_ID, product_info["attribute_set_id"])
 
