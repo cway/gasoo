@@ -3,8 +3,8 @@ module ProductsHelper
 
    def get_attribute_input( attribute, product )
      input_str        =  ""
-     if product.configurable_attributes
-       if product.configurable_attributes.include?( attribute.attribute_id )
+     if product['configurable_attributes']
+       if product['configurable_attributes'].include?( attribute.attribute_id )
          return input_str
        end
      end     
@@ -33,7 +33,7 @@ module ProductsHelper
    end
 
    def configurable_tab_title( product )
-     unless product.configurable_attributes
+     unless product.has_key? 'configurable_attributes'
        return
      end
      
@@ -41,7 +41,7 @@ module ProductsHelper
    end
 
    def configurable_tab_content( product )
-     unless product.configurable_attributes
+     unless product.has_key? 'configurable_attributes'
        return 
      end  
 
@@ -49,7 +49,7 @@ module ProductsHelper
      configurable_str += "<div class=\"row-fluid sortable\"><div class=\"box span12\"><div class=\"box-header well\" data-original-title><h2>创建单个商品</h2></div><div class=\"box-content\"><table class=\"table table-bordered table-striped table-condensed\"><thead></thead><tbody id=\"simple_products_tbody\"></tbody></table><div class=\"pagination pagination-centered\"><button id=\"add-simple-product\" class=\"btn\">创建商品</button></div></div></div><!--/span--></div><!--/row-->"
      configurable_str += "<div class=\"row-fluid sortable\"><div class=\"box span12\"><div class=\"box-header well\" data-original-title><h2>选择已有商品</h2></div><div class=\"box-content\"><table class=\"table table-striped table-bordered bootstrap-datatable datatable\"><thead><tr><th></th><th>名称</th><th>sku</th><th>价格</th><th>库存</th></tr></thead><tbody id=\"exists_products_tbody\">"
 
-     attribute_set_id            = product.attribute_set_id.to_i
+     attribute_set_id            = product['attribute_set_id'].to_i
      type_id                     = ApplicationController::SIMPLE_PRODUCT_ID
      conditions                  = { :attribute_set_id => attribute_set_id, :type_id => type_id }
      products                    = Product.select("entity_id").where( conditions )
@@ -67,10 +67,10 @@ module ProductsHelper
        products[index].product_attributes["qty"]    = attribute_values[:qty][product.entity_id]
      end
   
-     if product.children
+     if product['configurable_children']
        products.each do |tmp_product|
          configurable_str         += "<tr><td class='center'><div class='input-prepend input-append'><input type=\"checkbox\" ";
-         if product.children.include? (tmp_product.entity_id)
+         if product['configurable_children'].include? (tmp_product.entity_id)
            configurable_str       += "checked=checked "
          end
          configurable_str         +=  "name=\"selected_simple_products\" value=" + tmp_product.entity_id.to_s + " ></div></td><td class='center'>" + tmp_product.product_attributes['name'] + "</td><td class='center'>" + tmp_product.product_attributes['sku'] + "</td><td class='center'>" + tmp_product.product_attributes['price'].to_s + "</td><td class='center'>" + tmp_product.product_attributes['qty'].to_s + "</td></tr>"

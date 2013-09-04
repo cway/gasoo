@@ -1,21 +1,10 @@
-<form accept-charset="UTF-8" action="/products/<%= @product.entity_id %>" class="form-horizontal" id="edit_product" method="post">
-<% if @product.errors.any? %>
-	<div class="alert alert-error">
-		<button type="button" class="close" data-dismiss="alert">×</button>
-		<strong><%= pluralize(@product.errors.count, "error") %></strong> 
-		<ul>
-		   <% @product.errors.full_messages.each do |msg| %>
-		      <li><%= msg %></li>
-		   <% end %>
-		</ul>
-	</div>
-<% end %>
+<form accept-charset="UTF-8" action="/products/<%= @product['id'] %>" class="form-horizontal" id="edit_product" method="post">
 <fieldset>
 <input name="_method" type="hidden" value="put" />
 <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
-<input name="attribute_set_id" type="hidden" value="<%= @product.attribute_set_id %>" />
+<input name="attribute_set_id" type="hidden" value="<%= @product['attribute_set_id'] %>" />
 <input name="categories" id="categories"  type="hidden" />
-<input name="type_id" id="type_id"  type="hidden" value="<%= @product.type_id %>" />
+<input name="type_id" id="type_id"  type="hidden" value="<%= @product['type_id'] %>" />
 <input name="body" id="body" type="hidden" />
 <ul class="nav nav-tabs" id="myTab">
 	<% @group_list.each do |group_id, group| %>
