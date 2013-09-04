@@ -172,7 +172,8 @@ class ProductsController < ApplicationController
   def edit 
     @product                                                    = internal_api( "/product/#{params[:id]}", { id: params[:id] }, "GET" )
     @group_list                                                 = Hash.new
-    init_product_group_list( @product['attribute_set_id'] )
+    product                                                     = Product.select("attribute_set_id").find( params[:id] )
+    init_product_group_list( product.attribute_set_id )
 
     # if @product.type_id.to_i == ApplicationController::CONFIGURABLE_PRODUCT_ID
     #   children                                                  = ProductRelation.find(:all, :conditions => [ "parent_id = #{@product.entity_id}" ], :select => "child_id" )
