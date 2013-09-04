@@ -9,7 +9,7 @@ module ProductsHelper
        end
      end     
 
-     input_str         =  "<div class=\"control-group\"><label class=\"control-label\" for=\"#{attribute.attribute_code}\">#{attribute.frontend_label}</label><div class=\"controls\">"
+     input_str       =  "<div class=\"control-group\"><label class=\"control-label\" for=\"#{attribute.attribute_code}\">#{attribute.frontend_label}</label><div class=\"controls\">"
 
      case attribute.frontend_input 
      when "text"
@@ -17,9 +17,9 @@ module ProductsHelper
      when "select"
      	input_str     += "<select id=\"#{attribute.attribute_code}\" name=\"attributes[#{attribute.attribute_code}]\" class=\"attribute_value\" data-rel=\"chosen\">"
      	attribute.options.each do |option|
-     		input_str += "<option value=\"#{option.option_id}\">#{option.value}</option>"
+     		input_str   += "<option value=\"#{option.option_id}\">#{option.value}</option>"
         end
-        input_str     += "</select>"
+        input_str   += "</select>"
      when "textarea"
      	input_str     += "<textarea class=\"cleditor attribute_value\" name=\"attributes[#{attribute.attribute_code}]\" id=\"#{attribute.attribute_code}\" rows=\"3\"></textarea>"
      when "price"
@@ -28,7 +28,7 @@ module ProductsHelper
      	input_str     += "<button id=\"image-management\" class=\"btn btn-large btn-primary btn-round\">选择图片</button><table class=\"table table-striped\"><thead><tr><th>缩略图</th><th>图片地址</th><th></th></tr></thead><tbody id=\"product_images_tbody\"></tbody></table>"
      end
 
-     input_str       += "</div></div>"      
+     input_str      += "</div></div>"      
      input_str   
    end
 
@@ -74,7 +74,7 @@ module ProductsHelper
        response_body                        = JSON.parse response.body
        if response_body['status'] != 1
          raise response_body['err_msg']
-       end 
+       end
      else
        raise "请求失败"
      end
