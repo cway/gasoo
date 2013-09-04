@@ -200,33 +200,26 @@ class ProductsController < ApplicationController
   def create
     product_info                           =  JSON.parse( params[:body] )
     logger_info                            =  "创建商品 " + product_info['sku']
-
-    conn = Faraday.new(:url => "http://192.168.1.110:12581/" ) do |faraday|
-      faraday.request  :url_encoded             # form-encode POST params
-      faraday.response :logger                  # log requests to STDOUT
-      # faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
-      faraday.adapter  :em_synchrony            # fiber aware http client
-    end
-
-    headers['Content-Type']                = 'application/json'
-    response                               = conn.post do |request|
-      request.url                          "product"
-      request.headers['Content-Type']      = headers['Content-Type']
-      request.body                         = params[:body]
-    end
-
-    render :json => response
-    return
-
-    begin 
-      product                              =  Product.create_product product_info
+    begin
       admin_logger logger_info, SUCCESS
+      product                              =  internal_api '/product', params[:body]
       redirect_to :action => "edit", :id => product.entity_id, :notice => '商品创建成功.'
     rescue => err
       puts err.backtrace
       admin_logger logger_info, FAILED
       redirect_to :action => "new", :notice => err.message
     end 
+    
+
+    # begin 
+    #   product                              =  Product.create_product product_info
+    #   admin_logger logger_info, SUCCESS
+    #   redirect_to :action => "edit", :id => product.entity_id, :notice => '商品创建成功.'
+    # rescue => err
+    #   puts err.backtrace
+    #   admin_logger logger_info, FAILED
+    #   redirect_to :action => "new", :notice => err.message
+    # end 
   end
   
   
@@ -247,10 +240,10 @@ class ProductsController < ApplicationController
 
   # PUT /products/1
   def update
-    product_info                                  = JSON.parse( params[:body] )
-    logger_info                                   = "更新商品 " + product_info["entity_id"].to_s
-    @product                                      = Product.find(product_info["entity_id"])
-    attribute_list                                = Product.get_attributes(ApplicationController::PRODUCT_TYPE_ID, product_info["attribute_set_id"])
+    product_info                                   = JSON.parse( params[:body] )
+    logger_info                                    = "更新商品 " + product_info["entity_id"].to_s
+    @product                                       = Product.find(product_info["entity_id"])
+    attribute_list                                 = Product.get_attributes(ApplicationController::PRODUCT_TYPE_ID, product_info["attribute_set_id"])
 
 
     attribute_values                               = Hash.new 

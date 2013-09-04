@@ -31,6 +31,8 @@ class ApplicationController < ActionController::Base
   SUCCESS                 = 1
   FAILED                  = 0
 
+  REQUEST_SUCCESS         = 200
+
   ATTRIBUTE_INPUT_TYPE    = { 
                                "text"        => "文本框(单行)",
                                "password"    => "密码",
@@ -81,6 +83,41 @@ class ApplicationController < ActionController::Base
                               'action'       =>  action_name   
                             }       
     AdminLog.create( log_entity )
+  end
+
+  def internal_api( url = '', params = {}, type = 'POST', headers = {} )
+    conn = Faraday.new(:url => "http://192.168.1.110:12581" ) do |faraday|
+      faraday.request  :url_encoded             # form-encode POST params
+      faraday.response :logger                  # log requests to STDOUT
+      faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
+      #faraday.adapter  :em_synchrony            # fiber aware http client
+    end
+
+    headers['Content-Type']                  = 'application/json' unless headers['Content-Type']
+    response                                 = nil
+    ret                                      = nil
+    if type == "POST" or type == "post"
+      response                               = conn.post do |request|
+        request.url                          url
+        request.headers['Content-Type']      = headers['Content-Type']
+        request.body                         = params
+      end
+    else
+      response = conn.get do |request|
+        request.url                          url
+      end
+    end
+
+    if response
+      response_body                          = JSON.parse response.body
+      if response_body.code != 0
+        raise response_body.err_msg
+      end
+      ret                                    = response_body.data
+    else
+      raise "请求失败"
+    end
+    ret
   end
 
   def verify_required_params( params, required = [] )
