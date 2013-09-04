@@ -40,22 +40,22 @@ ProductObj.prototype.AddImage = function( image_url )
    this.image.push( image_url );
 }  
 
-ProductObj.prototype.AddSimpleProduct = function( product )
+ProductObj.prototype.AddConfigurableChild = function( product )
 {
-   if( false == this.hasOwnProperty( "simple_products" ) )
+   if( false == this.hasOwnProperty( "configurable_children" ) )
    {
-      this.simple_products           = new Array();
+      this.configurable_children                      = new Array();
    }
   
-   this.simple_products.push( product ); 
+   this.configurable_children.push( product ); 
   
-   if( false == productObj.hasOwnProperty( "simple_products_ids" ) )
+   if( false == productObj.hasOwnProperty( "configurable_children_ids" ) )
    {
-      productObj.simple_products_ids           = new Array();
+      productObj.configurable_children_ids           = new Array();
    }
-   if( -1 == jQuery.inArray( product.entity_id, productObj.simple_products_ids ) )
+   if( -1 == jQuery.inArray( product.entity_id, productObj.configurable_children_ids ) )
    {
-      productObj.simple_products_ids.push( product.entity_id );
+      productObj.configurable_children_ids.push( product.entity_id );
    }
     console.log( this );
 }
@@ -73,12 +73,12 @@ ProductObj.prototype.GetImageTableData =  function()
   return append_text;
 }
 
-ProductObj.prototype.GetSimpleProductTableData =  function()
+ProductObj.prototype.GetConfigurableChildTableData =  function()
 {
   append_text               =  "";
-  if(  productObj.hasOwnProperty( "simple_products" ) )
+  if(  productObj.hasOwnProperty( "configurable_children" ) )
   {
-    $.each( this.simple_products, function( index, product ){
+    $.each( this.configurable_children, function( index, product ){
     //  append_text            +=  "<tr><td class='center'><div class='input-prepend input-append'><span>"+ product.name +"</span></div></td><td class='center'><div class='input-prepend input-append'><span>" + product.price + "</span></div></td></tr>";
       append_text            +=  "<tr><td class='center'>" + product.name + "</td><td class='center'>"+ product.sku +"</td><td class='center'>" + product.price + "</td><td class='center'>" + product.qty + "</td></tr>";
     });
@@ -96,10 +96,10 @@ function RefreshImageTable()
     $("#product_images_tbody").append( table_data );
 }
 
-function RefreshSimpleProductTable()
+function RefreshConfigurableChildTable()
 {
   $("#simple_products_tbody").empty();
-  table_data                  = productObj.GetSimpleProductTableData();
+  table_data                  = productObj.GetConfigurableChildTableData();
   $("#simple_products_tbody").append( table_data );
 }
 
@@ -200,13 +200,13 @@ $(function () {
      $('input[type="checkbox"][name="selected_simple_products"]:checked').each(
          function(){
             entity_id = $(this).val();
-            if( false == productObj.hasOwnProperty( "simple_products_ids" ) )
+            if( false == productObj.hasOwnProperty( "configurable_children_ids" ) )
             {
-               productObj.simple_products_ids           = new Array();
+               productObj.configurable_children_ids           = new Array();
             }      
-            if( -1 == jQuery.inArray( entity_id, productObj.simple_products_ids ) )
+            if( -1 == jQuery.inArray( entity_id, productObj.configurable_children_ids ) )
             {
-              productObj.simple_products_ids.push( entity_id );
+              productObj.configurable_children_ids.push( entity_id );
             }
      });
 
@@ -240,13 +240,13 @@ $(function () {
      $('input[type="checkbox"][name="selected_simple_products"]:checked').each(
          function(){
             entity_id = $(this).val();
-            if( false == productObj.hasOwnProperty( "simple_products_ids" ) )
+            if( false == productObj.hasOwnProperty( "configurable_children_ids" ) )
             {
-               productObj.simple_products_ids           = new Array();
+               productObj.configurable_children_ids           = new Array();
             }
-            if( -1 == jQuery.inArray( entity_id, productObj.simple_products_ids ) )
+            if( -1 == jQuery.inArray( entity_id, productObj.configurable_children_ids ) )
             {
-              productObj.simple_products_ids.push( entity_id );
+              productObj.configurable_children_ids.push( entity_id );
             }
      });
 
@@ -311,8 +311,8 @@ $(function () {
                        {
                          if( data["status"] == 1 )
                          {
-                           window.opener.window.productObj.AddSimpleProduct( data['data'] );
-                           window.opener.window.RefreshSimpleProductTable();
+                           window.opener.window.productObj.AddConfigurableChild( data['data'] );
+                           window.opener.window.RefreshConfigurableChildTable();
                            window.close();
                          }
                          else

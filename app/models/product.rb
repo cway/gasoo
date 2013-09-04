@@ -258,7 +258,7 @@ class Product < ActiveRecord::Base
     attributes                    = get_update_attributes( attribute_values )  
  
     attributes.each do |attribute|
-      if attribute["value"].class =="String" and attribute["value"].empty?
+      if attribute["value"].class == String and attribute["value"].empty?
         next
       end
 

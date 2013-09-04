@@ -87,9 +87,9 @@ class ApplicationController < ActionController::Base
 
   def internal_api( url = '', params = {}, type = 'POST', headers = {} )
     conn = Faraday.new(:url => "http://192.168.1.110:12581" ) do |faraday|
-      faraday.request  :url_encoded             # form-encode POST params
-      faraday.response :logger                  # log requests to STDOUT
-      faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
+      faraday.request  :url_encoded              # form-encode POST params
+      faraday.response :logger                   # log requests to STDOUT
+      faraday.adapter  Faraday.default_adapter   # make requests with Net::HTTP
       #faraday.adapter  :em_synchrony            # fiber aware http client
     end
 

@@ -169,23 +169,23 @@ class ProductsController < ApplicationController
 
 
   # GET /products/1/edit
-  def edit
-    @product                                                    = Product.find(params[:id])
+  def edit 
+    @product                                                    = internal_api( "/products/#{params[:id]}", { id: params[:id] }, "GET" )
     @group_list                                                 = Hash.new
-    init_product_group_list( @product.attribute_set_id )
+    init_product_group_list( @product['attribute_set_id'] )
 
-    if @product.type_id.to_i == ApplicationController::CONFIGURABLE_PRODUCT_ID
-      children                                                  = ProductRelation.find(:all, :conditions => [ "parent_id = #{@product.entity_id}" ], :select => "child_id" )
-      @product.children                                         = Array.new 
-      children.each do |child|
-        @product.children.push( child.child_id )
-      end
-      configurable_attributes                                   = ProductConfigurableAttribute.find(:all, :conditions => ["product_id = #{@product.entity_id}"], :select => "attribute_id"  )
-      @product.configurable_attributes                          = Array.new
-      configurable_attributes.each do |configurable_attribute|
-        @product.configurable_attributes.push( configurable_attribute.attribute_id )
-      end 
-    end 
+    # if @product.type_id.to_i == ApplicationController::CONFIGURABLE_PRODUCT_ID
+    #   children                                                  = ProductRelation.find(:all, :conditions => [ "parent_id = #{@product.entity_id}" ], :select => "child_id" )
+    #   @product.children                                         = Array.new 
+    #   children.each do |child|
+    #     @product.children.push( child.child_id )
+    #   end
+    #   configurable_attributes                                   = ProductConfigurableAttribute.find(:all, :conditions => ["product_id = #{@product.entity_id}"], :select => "attribute_id"  )
+    #   @product.configurable_attributes                          = Array.new
+    #   configurable_attributes.each do |configurable_attribute|
+    #     @product.configurable_attributes.push( configurable_attribute.attribute_id )
+    #   end 
+    # end 
 
     @init_new_product_js                                        = true 
   end
@@ -196,10 +196,10 @@ class ProductsController < ApplicationController
   def create
     product_info                           =  JSON.parse( params[:body] )
     logger_info                            =  "创建商品 " + product_info['sku']
-    begin
-      admin_logger logger_info, SUCCESS
+    begin 
       product                              =  internal_api( '/product', params[:body] )
-      redirect_to :action => "edit", :id => product['entity_id'], :notice => '商品创建成功.'
+      admin_logger logger_info, SUCCESS
+      redirect_to :action => "edit", :id => product['id'], :notice => '商品创建成功.'
     rescue => err
       puts err.backtrace
       admin_logger logger_info, FAILED
@@ -223,10 +223,9 @@ class ProductsController < ApplicationController
     product_info                           =  JSON.parse( request.body.string )
     logger_info                            =  "创建商品 " + product_info['sku'] 
     begin  
-      product                              =  Product.create_product( product_info )
-      product_info["entity_id"]            =  product.entity_id
+      product                              =  internal_api( '/product', params[:body] )
       admin_logger logger_info, SUCCESS
-      render :json                         => { :status => 1, :data => product_info }
+      render :json                         => { :status => 1, :data => product }
     rescue => err
       puts err.backtrace
       admin_logger logger_info, FAILED
