@@ -226,7 +226,7 @@ class ProductsController < ApplicationController
     product_info                           =  JSON.parse( request.body.string )
     logger_info                            =  "创建商品 " + product_info['sku'] 
     begin  
-      product                              =  internal_api( '/product', params[:body] )
+      product                              =  internal_api( '/product', request.body.string )
       admin_logger logger_info, SUCCESS
       render :json                         => { :status => 1, :data => product }
     rescue => err
