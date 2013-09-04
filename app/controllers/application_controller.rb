@@ -110,7 +110,7 @@ class ApplicationController < ActionController::Base
 
     if response
       response_body                          = JSON.parse response.body
-      if response_body.code != 0
+      if response_body.status != 0
         raise response_body.err_msg
       end
       ret                                    = response_body.data
