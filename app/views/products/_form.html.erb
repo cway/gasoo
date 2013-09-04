@@ -1,15 +1,4 @@
 <form accept-charset="UTF-8" action="/products" class="form-horizontal" id="new_product" method="post">
-<% if @product.errors.any? %>
-	<div class="alert alert-error">
-		<button type="button" class="close" data-dismiss="alert">×</button>
-		<strong><%= pluralize(@product.errors.count, "error") %></strong> 
-		<ul>
-		   <% @product.errors.full_messages.each do |msg| %>
-		      <li><%= msg %></li>
-		   <% end %>
-		</ul>
-	</div>
-<% end %>
 <fieldset>
 <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
 <input name="attribute_set_id" type="hidden" value="<%= @product['attribute_set_id'] %>" />

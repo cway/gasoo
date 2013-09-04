@@ -62,7 +62,7 @@
 
     <%= render 'layouts/footer' %> 
     <script language="javascript">
-       var PRODUCT_ID                = <%= @product.entity_id %>;
+       var PRODUCT_ID                = <%= @product['id'] %>;
        var PRODUCT_ENTITY            = <%= raw @product.to_json %>;
     </script>
 </div><!--/.fluid-container-->
