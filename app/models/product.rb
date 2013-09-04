@@ -19,15 +19,13 @@ class Product < ActiveRecord::Base
     name                          = EavAttribute.get_attribute( {attribute_code: 'name', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
     sku                           = EavAttribute.get_attribute( {attribute_code: 'sku', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
     price                         = EavAttribute.get_attribute( {attribute_code: 'price', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
-    qty                           = EavAttribute.get_attribute( {attribute_code: 'qty', entity_type_id: ApplicationController::PRODUCT_TYPE_ID} )
 
 
     name_values                   = self.all_attribute_values( name )
     sku_values                    = self.all_attribute_values( sku )
     price_values                  = self.all_attribute_values( price )
-    qty_values                    = self.all_attribute_values( qty )
 
-    { :name => name_values, :sku => sku_values, :price => price_values, :qty => qty_values }
+    { :name => name_values, :sku => sku_values, :price => price_values }
   end
 
   def self.get_flashsales_attributes( ids )
