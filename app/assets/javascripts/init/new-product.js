@@ -307,35 +307,7 @@ $(function () {
                        }
      });
   });
-
-/*
-  $("#configurable_attributes_tab_title").bind("click", function(){
-    if( $("#exists_products_tbody").hasClass("loaded"))
-    {
-      return ;
-    }
-    $("#exists_products_tbody").append("<tr><td colspan=5 class='center'><div class='input-prepend input-append'><img src=\"/assets/ajax-loaders/ajax-loader-5.gif\" title=\"img/ajax-loaders/ajax-loader-5.gif\" ></div></td></tr>");
-    $.ajax({
-             type: "GET",
-             url:  "/products/get_simple_products",
-             data: {set: productObj.attribute_set_id },
-             success: function(data, status){
-               $("#exists_products_tbody").empty();
-	       append_text               =  "";
-               $.each( data, function( index, product ){
-                 append_text            +=  "<tr><td class='center'><div class='input-prepend input-append'><input type=\"checkbox\" ";
-                 if( -1 != jQuery.inArray( product.entity_id, productObj.childs ) )
-                 {
-                     append_text        +=  "checked=checked ";   
-                 }
-                 append_text            +=  "name=\"selected_simple_products\" value=" + product.entity_id + " ></div></td><td class='center'>" + product.name + "</td><td class='center'>"+ product.sku +"</td><td class='center'>" + product.price + "</td><td class='center'>" + product.qty + "</td></tr>";
-               });
-               $("#exists_products_tbody").append( append_text );  
-               $("#exists_products_tbody").addClass( "loaded" );
-             }
-    });
-  });
-*/ 
+ 
 
   RefreshImageTable();
   UpdateProductAttribute();
