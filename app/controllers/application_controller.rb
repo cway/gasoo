@@ -110,10 +110,11 @@ class ApplicationController < ActionController::Base
 
     if response
       response_body                          = JSON.parse response.body
-      if response_body.status != 0
-        raise response_body.err_msg
+      puts response.body
+      if response_body['status'] != 0
+        raise response_body['err_msg']
       end
-      ret                                    = response_body.data
+      ret                                    = response_body['data']
     else
       raise "请求失败"
     end
