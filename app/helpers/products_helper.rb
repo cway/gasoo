@@ -58,7 +58,7 @@ module ProductsHelper
        product_ids.push( product.entity_id )
      end
 
-     products                                       =  internal_api( '/products', { ids: product_ids.join(",") }, "GET" )
+     products                    =  ApplicationController::internal_api( '/products', { ids: product_ids.join(",") }, "GET" )
        
      if product['configurable_children']
        products.each do |tmp_product_id, tmp_product|
