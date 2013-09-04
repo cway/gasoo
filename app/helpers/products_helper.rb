@@ -81,15 +81,14 @@ module ProductsHelper
 
      products                                = response_body['data']
 
-     if product['configurable_children_ids']
-       products.each do |tmp_product_id, tmp_product|
-         configurable_str         += "<tr><td class='center'><div class='input-prepend input-append'><input type=\"checkbox\" ";
-         if product['configurable_children_ids'].include? (tmp_product['id'])
-           configurable_str       += "checked=checked "
-         end
-         configurable_str         +=  "name=\"selected_simple_products\" value=" + tmp_product['id'].to_s + " ></div></td><td class='center'>" + tmp_product['name'].to_s + "</td><td class='center'>" + tmp_product['sku'].to_s + "</td><td class='center'>" + tmp_product['price'].to_s + "</td></tr>"
-
+     
+     products.each do |tmp_product_id, tmp_product|
+       configurable_str         += "<tr><td class='center'><div class='input-prepend input-append'><input type=\"checkbox\" ";
+       if product['configurable_children_ids'] and product['configurable_children_ids'].include? (tmp_product['id'])
+         configurable_str       += "checked=checked "
        end
+       configurable_str         +=  "name=\"selected_simple_products\" value=" + tmp_product['id'].to_s + " ></div></td><td class='center'>" + tmp_product['name'].to_s + "</td><td class='center'>" + tmp_product['sku'].to_s + "</td><td class='center'>" + tmp_product['price'].to_s + "</td></tr>"
+
      end
      configurable_str           += "</tbody></table></div></div><!--/span--></div><!--/row-->"
      configurable_str           += "</div>"
