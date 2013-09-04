@@ -5,31 +5,28 @@ class ProductsController < ApplicationController
    
   # GET /index
   def index
-    @products                           =  Product.all
-    product_types                       =  ProductType.all_with_primary_key
-    attribute_sets                      =  AttributeSet.all_with_primary_key
-    attribute_values                    =  Product.get_index_attributes
     @products_index_js                  =  true
-    render 'index', :locals => { :product_types => product_types, :attribute_sets => attribute_sets, :attribute_values => attribute_values }
+    render 'index'
   end
 
   def list
     start                               =  params[:iDisplayStart]
     length                              =  params[:iDisplayLength]
 
-    @products                           =  Product.offset( start ).limit( length )
-    product_types                       =  ProductType.all_with_primary_key
-    attribute_sets                      =  AttributeSet.all_with_primary_key
-    attribute_values                    =  Product.get_index_attributes
-    products_list                       =  Array.new
-    @products.each do |product|
+    products                            =  Product.select("entity_id").offset( start ).limit( length )
+    product_ids                         =  Array.new
+    products.each do |product_entity|
+      product_ids  << product_entity.entity_id
+    end
+    products                            =  internal_api( '/products', { ids: product_ids.join(",") }, "GET" )
+
+    products.each do |product_id, product|
       product_entity                    = [
-                                           product.entity_id,
-                                           attribute_values[:name][product.entity_id], 
-                                           product_types[product.type_id.to_i], 
-                                           attribute_sets[product.attribute_set_id],
-                                           attribute_values[:price][product.entity_id],
-                                           "<a class=\"btn btn-info\" href=\"/products/#{product.entity_id}/edit\"><i class=\"icon-edit icon-white\"></i>编辑</a><a class=\"btn btn-danger\" href=\"/products/#{product.entity_id}\" data-confirm=\"确认删除?\" data-method=\"delete\" rel=\"nofollow\"><i class=\"icon-trash icon-white\"></i>删除</a>"
+                                           product_id,
+                                           product['name'], 
+                                           product['sku'], 
+                                           product['price'],  
+                                           "<a class=\"btn btn-info\" href=\"/products/#{product_id}/edit\"><i class=\"icon-edit icon-white\"></i>编辑</a><a class=\"btn btn-danger\" href=\"/products/#{product_id}\" data-confirm=\"确认删除?\" data-method=\"delete\" rel=\"nofollow\"><i class=\"icon-trash icon-white\"></i>删除</a>"
                                           ]
       products_list << product_entity
     end
@@ -201,7 +198,7 @@ class ProductsController < ApplicationController
     logger_info                            =  "创建商品 " + product_info['sku']
     begin
       admin_logger logger_info, SUCCESS
-      product                              =  internal_api '/product', params[:body]
+      product                              =  internal_api( '/product', params[:body] )
       redirect_to :action => "edit", :id => product['entity_id'], :notice => '商品创建成功.'
     rescue => err
       puts err.backtrace

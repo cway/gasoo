@@ -105,6 +105,7 @@ class ApplicationController < ActionController::Base
     else
       response = conn.get do |request|
         request.url                          url
+        request.params                       params
       end
     end
 
