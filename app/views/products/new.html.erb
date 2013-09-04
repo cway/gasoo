@@ -64,6 +64,6 @@
     <%= render 'layouts/footer' %>
     <script language="javascript">
        var PRODUCT_ID                = 0;  
-       var PRODUCT_ENTITY            = <%= raw @product.to_json( :methods => [:product_attributes, :children, :product_attributes] ) %>;
+       var PRODUCT_ENTITY            = <%= raw @product.to_json %>;
     </script>	
 </div><!--/.fluid-container-->

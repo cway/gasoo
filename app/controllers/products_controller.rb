@@ -124,7 +124,6 @@ class ProductsController < ApplicationController
   def init_product_group_list( attribute_set_id )
     attribute_list                                              = Product.get_attributes( ApplicationController::PRODUCT_TYPE_ID, attribute_set_id)
     group_count                                                 = 0
-    @product.product_attributes                                 = Hash.new
     attribute_list.each do |attribute|
       unless @group_list.has_key? attribute.attribute_group_id
         @group_list[attribute.attribute_group_id]               = Hash.new 
@@ -144,9 +143,6 @@ class ProductsController < ApplicationController
       attribute.attribute_group_name                            = nil
       attribute.value                                           = Product.get_product_attribute_value( params[:id], attribute )
       @group_list[attribute.attribute_group_id]["attributes"].push( attribute )
-      unless attribute.value == ""
-        @product.product_attributes[attribute.attribute_code]   = attribute.value
-      end
     end
   end
 

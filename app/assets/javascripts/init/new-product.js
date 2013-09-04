@@ -3,17 +3,7 @@ function ProductObj( entity )
    //entity                   = JSON.parse( obj_str );
    for(var entity_code in entity)
    {
-      if( entity_code == 'product_attributes' )
-      {
-          for(var entity_attribute_code in entity[entity_code])
-          {
-              this[entity_attribute_code]   = entity[entity_code][entity_attribute_code]
-          }
-      }
-      else
-      {
-        this[entity_code]                   = entity[entity_code];
-      }
+     this[entity_code]                   = entity[entity_code]; 
    } 
 
    if( this.hasOwnProperty( "image" ) )
