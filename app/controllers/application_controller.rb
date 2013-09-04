@@ -102,6 +102,12 @@ class ApplicationController < ActionController::Base
         request.headers['Content-Type']      = headers['Content-Type']
         request.body                         = params
       end
+    elsif type == "PUT" or type == "put"
+      response                               = conn.put do |request|
+        request.url                          url
+        request.headers['Content-Type']      = headers['Content-Type']
+        request.body                         = params
+      end
     else
       response = conn.get do |request|
         request.url                          url

@@ -240,46 +240,47 @@ class ProductsController < ApplicationController
   def update
     product_info                                   = JSON.parse( params[:body] )
     logger_info                                    = "更新商品 " + product_info["entity_id"].to_s
-    @product                                       = Product.find(product_info["entity_id"])
-    attribute_list                                 = Product.get_attributes(ApplicationController::PRODUCT_TYPE_ID, product_info["attribute_set_id"])
+    product                                        =  internal_api( '/product', params[:body], "PUT" )
+    # @product                                       = Product.find(product_info["entity_id"])
+    # attribute_list                                 = Product.get_attributes(ApplicationController::PRODUCT_TYPE_ID, product_info["attribute_set_id"])
 
 
-    attribute_values                               = Hash.new 
+    # attribute_values                               = Hash.new 
    
-    attribute_list.each do |attribute|
-      if product_info.has_key? attribute.attribute_code and product_info[attribute.attribute_code] != ""
-        attribute_values[attribute.attribute_code] =  product_info[attribute.attribute_code]
-      end 
-    end 
+    # attribute_list.each do |attribute|
+    #   if product_info.has_key? attribute.attribute_code and product_info[attribute.attribute_code] != ""
+    #     attribute_values[attribute.attribute_code] =  product_info[attribute.attribute_code]
+    #   end 
+    # end 
 
-    begin 
-      Product.transaction do
-        Product.update_product_attributes( @product, attribute_values )
-        CategoryProduct.where( :product_id => @product.entity_id ).delete_all
-        categories                                 = product_info["categories"]
+    # begin 
+    #   Product.transaction do
+    #     Product.update_product_attributes( @product, attribute_values )
+    #     CategoryProduct.where( :product_id => @product.entity_id ).delete_all
+    #     categories                                 = product_info["categories"]
 
-        unless categories.empty?
-          Product.add_categories( @product.entity_id, categories )
-        end
+    #     unless categories.empty?
+    #       Product.add_categories( @product.entity_id, categories )
+    #     end
 
-        ProductRelation.where( :parent_id => @product.entity_id ).delete_all
-        if product_info.has_key? "simple_products_ids"
-          product_relations                        = Array.new
-          product_info["simple_products_ids"].each do |simple_product_id|
-            product_relation_params                = Hash.new
-            product_relation_params["parent_id"]   = @product.entity_id
-            product_relation_params["child_id"]    = simple_product_id
-            product_relations.push( product_relation_params )
-          end
-          ProductRelation.create( product_relations )
-        end
+    #     ProductRelation.where( :parent_id => @product.entity_id ).delete_all
+    #     if product_info.has_key? "simple_products_ids"
+    #       product_relations                        = Array.new
+    #       product_info["simple_products_ids"].each do |simple_product_id|
+    #         product_relation_params                = Hash.new
+    #         product_relation_params["parent_id"]   = @product.entity_id
+    #         product_relation_params["child_id"]    = simple_product_id
+    #         product_relations.push( product_relation_params )
+    #       end
+    #       ProductRelation.create( product_relations )
+    #     end
 
-        @product.sku                               = product_info['sku']
-        @product.updated_at                        = Time.now
-        @product.save
-      end
+    #     @product.sku                               = product_info['sku']
+    #     @product.updated_at                        = Time.now
+    #     @product.save
+    #   end
       admin_logger logger_info, SUCCESS
-      redirect_to :action => "edit", :id => @product.entity_id, :notice => '更新成功'
+      redirect_to :action => "edit", :id => product['entity_id'], :notice => '更新成功'
     rescue => err
       puts err.backtrace
       admin_logger logger_info, FAILED
