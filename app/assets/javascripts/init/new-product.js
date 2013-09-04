@@ -38,9 +38,9 @@ ProductObj.prototype.AddConfigurableChild = function( product )
    {
       productObj.configurable_children_ids           = new Array();
    }
-   if( -1 == jQuery.inArray( product.entity_id, productObj.configurable_children_ids ) )
+   if( -1 == jQuery.inArray( product.id, productObj.configurable_children_ids ) )
    {
-      productObj.configurable_children_ids.push( product.entity_id );
+      productObj.configurable_children_ids.push( product.id );
    }
     console.log( this );
 }
@@ -184,14 +184,14 @@ $(function () {
  
      $('input[type="checkbox"][name="selected_simple_products"]:checked').each(
          function(){
-            entity_id = $(this).val();
+            product_id = $(this).val();
             if( false == productObj.hasOwnProperty( "configurable_children_ids" ) )
             {
                productObj.configurable_children_ids           = new Array();
             }      
-            if( -1 == jQuery.inArray( entity_id, productObj.configurable_children_ids ) )
+            if( -1 == jQuery.inArray( product_id, productObj.configurable_children_ids ) )
             {
-              productObj.configurable_children_ids.push( entity_id );
+              productObj.configurable_children_ids.push( product_id );
             }
      });
 
@@ -224,14 +224,14 @@ $(function () {
 
      $('input[type="checkbox"][name="selected_simple_products"]:checked').each(
          function(){
-            entity_id = $(this).val();
+            product_id = $(this).val();
             if( false == productObj.hasOwnProperty( "configurable_children_ids" ) )
             {
                productObj.configurable_children_ids           = new Array();
             }
-            if( -1 == jQuery.inArray( entity_id, productObj.configurable_children_ids ) )
+            if( -1 == jQuery.inArray( product_id, productObj.configurable_children_ids ) )
             {
-              productObj.configurable_children_ids.push( entity_id );
+              productObj.configurable_children_ids.push( product_id );
             }
      });
 
