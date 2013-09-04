@@ -38,9 +38,10 @@ ProductObj.prototype.AddConfigurableChild = function( product )
    {
       productObj.configurable_children_ids           = new Array();
    }
-   if( -1 == jQuery.inArray( product.id, productObj.configurable_children_ids ) )
+   product_id                                        = parseInt( product.id );
+   if( -1 == jQuery.inArray( product_id, productObj.configurable_children_ids ) )
    {
-      productObj.configurable_children_ids.push( product.id );
+      productObj.configurable_children_ids.push( product_id );
    }
     console.log( this );
 }
@@ -184,7 +185,7 @@ $(function () {
  
      $('input[type="checkbox"][name="selected_simple_products"]:checked').each(
          function(){
-            product_id = $(this).val();
+            product_id = parseInt( $(this).val() );
             if( false == productObj.hasOwnProperty( "configurable_children_ids" ) )
             {
                productObj.configurable_children_ids           = new Array();
@@ -224,7 +225,7 @@ $(function () {
 
      $('input[type="checkbox"][name="selected_simple_products"]:checked').each(
          function(){
-            product_id = $(this).val();
+            product_id = parseInt( $(this).val() );
             if( false == productObj.hasOwnProperty( "configurable_children_ids" ) )
             {
                productObj.configurable_children_ids           = new Array();
