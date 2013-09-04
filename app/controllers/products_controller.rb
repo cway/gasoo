@@ -96,7 +96,7 @@ class ProductsController < ApplicationController
       end
     end
     
-    @product                           = Product.new
+    @product                           = Hash.new
     init_product_params( attribute_set_id, type_id, params )
 
     @group_list                        = Hash.new
@@ -108,20 +108,20 @@ class ProductsController < ApplicationController
   end
 
   def init_product_params( attribute_set_id, type_id, params )
-    @product.attribute_set_id          = attribute_set_id
-    @product.type_id                   = type_id
-    @product.entity_type_id            = ApplicationController::PRODUCT_TYPE_ID
+    @product['attribute_set_id']                        = attribute_set_id
+    @product['type_id']                                 = type_id
+    @product['entity_type_id']                          = ApplicationController::PRODUCT_TYPE_ID
 
-    if @product.type_id == ApplicationController::CONFIGURABLE_PRODUCT_ID
+    if @product['type_id'] == ApplicationController::CONFIGURABLE_PRODUCT_ID
       if params[:configurable_attributes]
-        @product.configurable_attributes             = params[:configurable_attributes]
-        @product.configurable_attributes.each_with_index do | attribute_id, index |
-          @product.configurable_attributes[index]    = attribute_id.to_i
+        @product['configurable_attributes']             = params[:configurable_attributes]
+        @product['configurable_attributes'].each_with_index do | attribute_id, index |
+          @product['configurable_attributes'][index]    = attribute_id.to_i
         end
-        @product.required_options     = 1
-        @product.has_options          = 1
+        @product['required_options']                    = 1
+        @product['has_options']                         = 1
       else
-        @product.type_id              = ApplicationController::SIMPLE_PRODUCT_ID
+        @product['type_id']                             = ApplicationController::SIMPLE_PRODUCT_ID
       end
     end
   end
@@ -294,8 +294,7 @@ class ProductsController < ApplicationController
   def destroy
     logger_info                                     = "删除商品 " + params[:id].to_s
     begin
-      @product                                      = Product.find(params[:id])
-      @product.update_attribute("is_active", 0);
+      product                                       =  internal_api( "/product/#{params[:id]}", { id: params[:id] }, "DELETE" )
       admin_logger logger_info, SUCCESS
     rescue => err
       admin_logger logger_info, FAILED
