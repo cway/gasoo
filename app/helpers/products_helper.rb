@@ -33,7 +33,7 @@ module ProductsHelper
    end
 
    def configurable_tab_title( product )
-     unless product.has_key? 'configurable_attributes'
+     unless product['configurable_attributes']
        return
      end
      
@@ -41,7 +41,7 @@ module ProductsHelper
    end
 
    def configurable_tab_content( product )
-     unless product.has_key? 'configurable_attributes'
+     unless product['configurable_attributes']
        return 
      end  
 
