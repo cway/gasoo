@@ -5,8 +5,8 @@ class FlashsalesController < ApplicationController
   
   # GET /index
   def index
-    @flashsales                  = EventProduct.get_daily_flashsales #find_by_rule_id( 1 );
-    
+    #@flashsales                  = EventProduct.get_daily_flashsales #find_by_rule_id( 1 );
+    @flashsales_index_js          = true
     render 'index'
   end
 

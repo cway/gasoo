@@ -33,7 +33,7 @@
 					</div>
 				</div>
 				<div class="box-content">
-					  	<table class="table table-striped table-bordered bootstrap-datatable datatable">
+					  	<table id="flashsales_list_table" class="table table-striped table-bordered bootstrap-datatable datatable">
 						  <thead>
 							  <tr>
 								  <th>闪购名称</th>
@@ -43,22 +43,6 @@
 							  </tr>
 						  </thead>   
 						  <tbody>
-							<% @flashsales.each do |daily_sales| %>
-							<tr>
-								<td><%= daily_sales.from_date.strftime('%Y-%m-%d') %></td>
-								<td class="center"><%= daily_sales.cnt %></td>
-                                                                <td class="center">
-									<a class="btn btn-info" href="/flashsales/<%= daily_sales.rule_id  %>/edit">
-										<i class="icon-edit icon-white"></i>  
-										编辑                                            
-									</a>
-									<a class="btn btn-danger" href="/flashsales/<%= daily_sales.rule_id %>" data-confirm="确认删除?" data-method="delete" rel="nofollow">
-										<i class="icon-trash icon-white"></i> 
-										删除
-									</a>
-								</td>
-							</tr>
-                                                        <% end %>
 						  </tbody>
 					  </table>
 					  <br />

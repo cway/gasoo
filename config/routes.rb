@@ -13,6 +13,7 @@ EcAdmin::Application.routes.draw do
   get   'sales_orders/:id/shipping'         => 'sales_orders#shipping'
   post  'sales_orders/:id/create_shipping'  => 'sales_orders#create_shipping'
   get   'products/list'                     => 'products#list'
+  get   'flashsales/list'                   => 'flashsales#list'
   resources  :main
   resources  :attributes
   resources  :attribute_sets
