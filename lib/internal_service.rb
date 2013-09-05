@@ -5,7 +5,7 @@ class InternalService
   attr_accessor :conn, :response
 
   def initialize( params = {} )
-  	params['url']        =  "http://192.168.1.110:12581" unless params['url']
+  	params['url']        =  APP_CONFIG["internal_api_host"] unless params['url']
   	@conn = Faraday.new(:url => params['url'] ) do |faraday|
       faraday.request  :url_encoded             # form-encode POST params
       faraday.response :logger                  # log requests to STDOUT

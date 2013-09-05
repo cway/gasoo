@@ -16,6 +16,7 @@ end
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
+  attr_accessor :internal_service
   protect_from_forgery with: :exception
   before_filter :authenticate_user!
   
@@ -67,6 +68,10 @@ class ApplicationController < ActionController::Base
                                'delivering'  => 9
                             }
 
+  def initialize
+    @internal_service     = InternalService.new
+    super
+  end
 
   def model_to_hash( model_entity )
     model_entity.attributes
@@ -86,51 +91,27 @@ class ApplicationController < ActionController::Base
   end
 
   def internal_api( url = '', params = {}, type = 'POST', headers = {} )
-    conn = Faraday.new(:url => "http://192.168.1.110:12581" ) do |faraday|
-      faraday.request  :url_encoded              # form-encode POST params
-      faraday.response :logger                   # log requests to STDOUT
-      faraday.adapter  Faraday.default_adapter   # make requests with Net::HTTP
-      #faraday.adapter  :em_synchrony            # fiber aware http client
-    end
-
-    headers['Content-Type']                  = 'application/json' unless headers['Content-Type']
-    response                                 = nil
-    ret                                      = nil
-    if type == "POST" or type == "post"
-      response                               = conn.post do |request|
-        request.url                          url
-        request.headers['Content-Type']      = headers['Content-Type']
-        request.body                         = params
+    response                  = nil
+    begin
+      case type
+      when 'POST':   response = internal_service.post( url, params, headers )
+      when 'PUT':    response = internal_service.put( url, params, headers )
+      when 'DELTET': response = internal_service.delete( url, params )
+      when 'GET':    response = internal_service.get( url, params )
       end
-    elsif type == "PUT" or type == "put"
-      response                               = conn.put do |request|
-        request.url                          url
-        request.headers['Content-Type']      = headers['Content-Type']
-        request.body                         = params
-      end
-    else
-      response = conn.get do |request|
-        request.url                          url
-        request.params                       = params
-      end
-    end
-
-    if response
-      response_body                          = JSON.parse response.body
-      if response_body['status'] != 1
-        raise response_body['err_msg']
-      end
-      ret                                    = response_body['data']
-    else
+    rescue Exception => e
+      raise "请求失败"
+    end 
+    unless response
       raise "请求失败"
     end
-    ret
+    response
   end
 
   def verify_required_params( params, required = [] )
     required.each do | required_key |
       unless params.has_key? required_key
-        raise ArgumentError, "未定义属性 #{required_key}"  
+        raise "未定义属性 #{required_key}"  
       end
     end
   end
