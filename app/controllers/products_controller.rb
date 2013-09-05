@@ -13,7 +13,9 @@ class ProductsController < ApplicationController
     start                               =  params[:iDisplayStart]
     length                              =  params[:iDisplayLength]
 
-    products                            =  Product.select("entity_id").offset( start ).limit( length )
+    iTotalRecords                       =  Product.count
+    iTotalDisplayRecords                =  Product.where({is_active: ACTIVE}).count
+    products                            =  Product.select("entity_id").where({is_active: ACTIVE}).offset( start ).limit( length )
     product_ids                         =  Array.new
     products.each do |product_entity|
       product_ids  << product_entity.entity_id
@@ -31,7 +33,7 @@ class ProductsController < ApplicationController
       products_list << product_entity
     end
     
-    render :json => {sEcho: params[:sEcho], iTotalRecords: Product.count, iTotalDisplayRecords: Product.count, aaData: products_list}
+    render :json => {sEcho: params[:sEcho], iTotalRecords: iTotalRecords, iTotalDisplayRecords: iTotalDisplayRecords, aaData: products_list}
   end
 
   # GET /products/1
@@ -75,24 +77,24 @@ class ProductsController < ApplicationController
     if ( params.has_key? 'type' and params.has_key? 'set' )
       real_new params
     else
-      @attribute_sets                  =  AttributeSet.find_all_by_entity_type_id( ApplicationController::PRODUCT_TYPE_ID )
-      @product_types                   =  ProductType.find_all_by_active( ApplicationController::ACTIVE )
+      @attribute_sets                  =  AttributeSet.find_all_by_entity_type_id( PRODUCT_TYPE_ID )
+      @product_types                   =  ProductType.find_all_by_active( ACTIVE )
       render( "init_new" )
     end 
   end
 
   def real_new( params )
-    configurable_product_type          = ApplicationController::CONFIGURABLE_PRODUCT_ID  
+    configurable_product_type          = CONFIGURABLE_PRODUCT_ID  
     attribute_set_id                   = params[:set].to_i
     type_id                            = params[:type].to_i
 
-    if type_id == ApplicationController::CONFIGURABLE_PRODUCT_ID and (params.has_key? 'continue') == false
-      configurable_attributes          = Product.get_attributes_by_frontend_input(ApplicationController::PRODUCT_TYPE_ID, attribute_set_id, "select");
+    if type_id == CONFIGURABLE_PRODUCT_ID and (params.has_key? 'continue') == false
+      configurable_attributes          = Product.get_attributes_by_frontend_input(PRODUCT_TYPE_ID, attribute_set_id, "select");
       unless configurable_attributes.empty? 
         render( "chose_configurable_attribute", :locals => {:configurable_attributes => configurable_attributes, :type => type_id, :set => attribute_set_id} )
         return
       else
-        type_id                        = ApplicationController::SIMPLE_PRODUCT_ID
+        type_id                        = SIMPLE_PRODUCT_ID
       end
     end
     
@@ -101,8 +103,7 @@ class ProductsController < ApplicationController
 
     @group_list                        = Hash.new
     init_product_group_list( attribute_set_id )
- 
-    #init_new_product_js => true load init/new_product.js
+  
     @init_new_product_js               = true 
     render( "new" )
   end
@@ -176,20 +177,6 @@ class ProductsController < ApplicationController
     product                                                     = Product.select("attribute_set_id").find( params[:id] )
     @product['attribute_set_id']                                = product.attribute_set_id
     init_product_group_list( @product['attribute_set_id'] )
-
-    # if @product.type_id.to_i == ApplicationController::CONFIGURABLE_PRODUCT_ID
-    #   children                                                  = ProductRelation.find(:all, :conditions => [ "parent_id = #{@product.entity_id}" ], :select => "child_id" )
-    #   @product.children                                         = Array.new 
-    #   children.each do |child|
-    #     @product.children.push( child.child_id )
-    #   end
-    #   configurable_attributes                                   = ProductConfigurableAttribute.find(:all, :conditions => ["product_id = #{@product.entity_id}"], :select => "attribute_id"  )
-    #   @product.configurable_attributes                          = Array.new
-    #   configurable_attributes.each do |configurable_attribute|
-    #     @product.configurable_attributes.push( configurable_attribute.attribute_id )
-    #   end 
-    # end 
-
     @init_new_product_js                                        = true 
   end
 
@@ -242,44 +229,6 @@ class ProductsController < ApplicationController
     logger_info                                    = "更新商品 " + product_info["id"].to_s
     begin
       product                                        =  internal_api( "/product/#{product_info['id']}", params[:body], "PUT" )
-    # @product                                       = Product.find(product_info["entity_id"])
-    # attribute_list                                 = Product.get_attributes(ApplicationController::PRODUCT_TYPE_ID, product_info["attribute_set_id"])
-
-
-    # attribute_values                               = Hash.new 
-   
-    # attribute_list.each do |attribute|
-    #   if product_info.has_key? attribute.attribute_code and product_info[attribute.attribute_code] != ""
-    #     attribute_values[attribute.attribute_code] =  product_info[attribute.attribute_code]
-    #   end 
-    # end 
-
-    # begin 
-    #   Product.transaction do
-    #     Product.update_product_attributes( @product, attribute_values )
-    #     CategoryProduct.where( :product_id => @product.entity_id ).delete_all
-    #     categories                                 = product_info["categories"]
-
-    #     unless categories.empty?
-    #       Product.add_categories( @product.entity_id, categories )
-    #     end
-
-    #     ProductRelation.where( :parent_id => @product.entity_id ).delete_all
-    #     if product_info.has_key? "simple_products_ids"
-    #       product_relations                        = Array.new
-    #       product_info["simple_products_ids"].each do |simple_product_id|
-    #         product_relation_params                = Hash.new
-    #         product_relation_params["parent_id"]   = @product.entity_id
-    #         product_relation_params["child_id"]    = simple_product_id
-    #         product_relations.push( product_relation_params )
-    #       end
-    #       ProductRelation.create( product_relations )
-    #     end
-
-    #     @product.sku                               = product_info['sku']
-    #     @product.updated_at                        = Time.now
-    #     @product.save
-    #   end
       admin_logger logger_info, SUCCESS
       redirect_to :action => "edit", :id => product['id'], :notice => '更新成功'
     rescue => err
@@ -305,13 +254,14 @@ class ProductsController < ApplicationController
 
   def get_children
     product_id                                      = params['entity_id']
-    children                                        = ProductRelation.find_all_by_parent_id product_id
-    unless children.empty?
-      children_ids                                  = Array.new
-      children.each do |child|
-        children_ids.push( child.child_id )
-      end 
-      product_children                              = Product.get_flashsales_attributes children_ids
+    product                                         = internal_api( "/product/#{params['entity_id']}", { id: params['entity_id'] }, "GET" )
+
+    #children                                        = ProductRelation.find_all_by_parent_id product_id
+    unless product['configurable_children_ids']
+      product['configurable_children_ids']          = Array.new
+    end
+    unless product['configurable_children_ids'].empty?
+      product_children                              = Product.get_flashsales_attributes product['configurable_children_ids']
       render :json                                  => { :status => 1, :data => product_children }
     else
       render :json                                  => { :status => 0, :data => [] }
