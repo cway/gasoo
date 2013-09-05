@@ -96,13 +96,13 @@ class ApplicationController < ActionController::Base
     begin
       case type
         when 'POST'
-          response       = internal_service.post( url, params, headers )
+          response       = @internal_service.post( url, params, headers )
         when 'PUT'
-          response       = internal_service.put( url, params, headers )
+          response       = @internal_service.put( url, params, headers )
         when 'DELTET'
-          response       = internal_service.delete( url, params )
+          response       = @internal_service.delete( url, params )
         when 'GET' 
-          response       = internal_service.get( url, params )
+          response       = @internal_service.get( url, params )
       end
     rescue Exception => e
       raise "请求失败"
