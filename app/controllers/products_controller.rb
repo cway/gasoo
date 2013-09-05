@@ -15,7 +15,7 @@ class ProductsController < ApplicationController
 
     iTotalRecords                       =  Product.count
     iTotalDisplayRecords                =  Product.where({is_active: ACTIVE}).count
-    products                            =  Product.select("entity_id").where({is_active: ACTIVE}).offset( start ).limit( length )
+    products                            =  Product.select("entity_id").where({is_active: ACTIVE}).order("entity_id desc").offset( start ).limit( length )
     product_ids                         =  Array.new
     products.each do |product_entity|
       product_ids  << product_entity.entity_id

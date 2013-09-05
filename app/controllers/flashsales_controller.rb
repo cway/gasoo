@@ -9,6 +9,28 @@ class FlashsalesController < ApplicationController
     
     render 'index'
   end
+
+  def list
+    start                               =  params[:iDisplayStart]
+    length                              =  params[:iDisplayLength]
+
+    iTotalRecords                       =  Eventrule.where({ parent_rule_id: FLASHSALES_RULE_ID }).count
+    iTotalDisplayRecords                =  Eventrule.where({ parent_rule_id: FLASHSALES_RULE_ID, is_active: ACTIVE}).count
+    
+    flashsales_events                   =  internal_api( '/flashsales', { offset: start,limit: length }, "GET" )
+    flashsales_list                     =  Array.new
+    flashsales_events.each do |flashsales|
+      flashsales_entity                 = [
+                                           flashsales['name'],
+                                           flashsales['from_date'] + " -- " + flashsales['end_date'], 
+                                           flashsales['products'].length,
+                                           "<a class=\"btn btn-info\" href=\"/flashsales/#{flashsales['id']}/edit\"><i class=\"icon-edit icon-white\"></i>编辑</a><a class=\"btn btn-danger\" href=\"/flashsales/#{flashsales['id']}\" data-confirm=\"确认删除?\" data-method=\"delete\" rel=\"nofollow\"><i class=\"icon-trash icon-white\"></i>删除</a>"
+                                          ]
+      flashsales_list << flashsales_entity
+    end
+    
+    render :json => {sEcho: params[:sEcho], iTotalRecords: iTotalRecords, iTotalDisplayRecords: iTotalDisplayRecords, aaData: flashsales_list}
+  end
   
   # GET /flashsales/new
   def new

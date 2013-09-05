@@ -26,6 +26,7 @@ class ApplicationController < ActionController::Base
   CUSTOMER_TYPE_ID        = 3
   CONFIGURABLE_PRODUCT_ID = 2
   SIMPLE_PRODUCT_ID       = 3
+  FLASHSALES_RULE_ID      = 1
   ACTIVE                  = 1
 
   CATEGORY_DEFAULT_SET_ID = 2
@@ -110,7 +111,12 @@ class ApplicationController < ActionController::Base
     unless response
       raise "请求失败"
     end
-    response
+    
+    response_body       = JSON.parse( response.body )
+    if response_body['status'] != 1
+      raise response_body['err_msg']
+    end
+    response_body['data']
   end
 
   def verify_required_params( params, required = [] )
