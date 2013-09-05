@@ -40,7 +40,7 @@ class ProductsController < ApplicationController
   def show
     @product                            =  Product.find(params[:id])
 
-    attribute_list                      =  Product.get_attributes( ApplicationController::PRODUCT_TYPE_ID , @product.attribute_set_id) 
+    attribute_list                      =  Product.get_attributes( PRODUCT_TYPE_ID , @product.attribute_set_id) 
   end
 
 
@@ -194,18 +194,7 @@ class ProductsController < ApplicationController
       puts err.backtrace
       admin_logger logger_info, FAILED
       redirect_to :action => "new", :notice => err.message
-    end 
-    
-
-    # begin 
-    #   product                              =  Product.create_product product_info
-    #   admin_logger logger_info, SUCCESS
-    #   redirect_to :action => "edit", :id => product.entity_id, :notice => '商品创建成功.'
-    # rescue => err
-    #   puts err.backtrace
-    #   admin_logger logger_info, FAILED
-    #   redirect_to :action => "new", :notice => err.message
-    # end 
+    end
   end
   
   
