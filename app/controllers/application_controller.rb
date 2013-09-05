@@ -1,5 +1,6 @@
 #encoding: utf-8
 #author cway 2013-07-09
+require 'InternalService'
 
 module RemovableConstants  
   
