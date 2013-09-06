@@ -214,8 +214,8 @@ class ProductsController < ApplicationController
 
   # PUT /products/1
   def update
-    product_info                                   = JSON.parse( params[:body] )
-    logger_info                                    = "更新商品 " + product_info["id"].to_s
+    product_info                                     = JSON.parse( params[:body] )
+    logger_info                                      = "更新商品 " + product_info["id"].to_s
     begin
       product                                        =  internal_api( "/product/#{product_info['id']}", params[:body], "PUT" )
       admin_logger logger_info, SUCCESS

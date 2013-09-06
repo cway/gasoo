@@ -59,10 +59,15 @@ class FlashsalesController < ApplicationController
     @eventproduct                                          =  EventProduct.find(params[:id])
   end
   
-  def edit
-    rule_id                                                =  params[:id] 
+  def edit 
     begin  
-      @eventrule                                           =  Eventrule.find( rule_id ) 
+      @eventrule                                           =  internal_api( "/flashsales/#{params[:id]}", { id: params[:id] }, "GET" )
+      if @eventrule['products']
+        @eventrule['product_ids']                          =  Array.new
+        @eventrule['products'].each do |product|
+          @eventrule['product_ids']                       <<  product['id']
+        end
+      end
     rescue Exception => e
       puts e.backtrace
       render :json => '不存在该闪购'
