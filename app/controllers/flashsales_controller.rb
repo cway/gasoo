@@ -21,7 +21,7 @@ class FlashsalesController < ApplicationController
     flashsales_events.each do |flashsales|
       flashsales_entity                 = [
                                            flashsales['name'],
-                                           flashsales['from_date'].strftime("%Y-%m-%d %H-%M-%S") + " -- " + flashsales['end_date'].strftime("%Y-%m-%d %H-%M-%S"), 
+                                           flashsales['from_date'] + " -- " + flashsales['end_date'], 
                                            flashsales['products'].length,
                                            "<a class=\"btn btn-info\" href=\"/flashsales/#{flashsales['id']}/edit\"><i class=\"icon-edit icon-white\"></i>编辑</a><a class=\"btn btn-danger\" href=\"/flashsales/#{flashsales['id']}\" data-confirm=\"确认删除?\" data-method=\"delete\" rel=\"nofollow\"><i class=\"icon-trash icon-white\"></i>删除</a>"
                                           ]
