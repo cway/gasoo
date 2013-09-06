@@ -16,19 +16,19 @@ class Eventrule < ActiveRecord::Base
    	 from_date                                   = Time.parse(eventrule_info['from_date']).getlocal()
      end_date                                    = Time.parse(eventrule_info['end_date']).getlocal()
      self.transaction do
-	   eventrule_params                          = Hash.new
-	   eventrule_params["parent_rule_id"]        = 1
-	   eventrule_params["name"]                  = "闪购-" + from_date.strftime("%Y-%m-%d")
-	   eventrule_params["description"]           = "杭州大厦-闪购"+ from_date.strftime("%Y-%m-%d")
-	   eventrule_params["from_date"]             = from_date.strftime("%Y-%m-%d %H:%M:%S")
-	   eventrule_params["end_date"]              = end_date.strftime("%Y-%m-%d %H:%M:%S")
-	   eventrule_params["is_active"]             = ApplicationController::ACTIVE
-	   eventrule                                 = Eventrule.new( eventrule_params )
-	   eventrule.save 
-	   products.each do |product|
-         EventProduct.create_event_product product, eventrule
+  	   eventrule_params                          = Hash.new
+  	   eventrule_params["parent_rule_id"]        = 1
+  	   eventrule_params["name"]                  = "闪购-" + from_date.strftime("%Y-%m-%d")
+  	   eventrule_params["description"]           = "杭州大厦-闪购"+ from_date.strftime("%Y-%m-%d")
+  	   eventrule_params["from_date"]             = from_date.strftime("%Y-%m-%d %H:%M:%S")
+  	   eventrule_params["end_date"]              = end_date.strftime("%Y-%m-%d %H:%M:%S")
+  	   eventrule_params["is_active"]             = ApplicationController::ACTIVE
+  	   eventrule                                 = Eventrule.new( eventrule_params )
+  	   eventrule.save 
+  	   products.each do |product|
+           EventProduct.create_event_product product, eventrule
        end
-	 end
+	   end
    end
 
    def self.update_eventrule( eventrule, eventrule_info )

@@ -5,7 +5,6 @@ class FlashsalesController < ApplicationController
   
   # GET /index
   def index
-    #@flashsales                  = EventProduct.get_daily_flashsales #find_by_rule_id( 1 );
     @flashsales_index_js          = true
     render 'index'
   end
@@ -22,7 +21,7 @@ class FlashsalesController < ApplicationController
     flashsales_events.each do |flashsales|
       flashsales_entity                 = [
                                            flashsales['name'],
-                                           flashsales['from_date'] + " -- " + flashsales['end_date'], 
+                                           flashsales['from_date'].strftime("%Y-%m-%d %H-%M-%S") + " -- " + flashsales['end_date'].strftime("%Y-%m-%d %H-%M-%S"), 
                                            flashsales['products'].length,
                                            "<a class=\"btn btn-info\" href=\"/flashsales/#{flashsales['id']}/edit\"><i class=\"icon-edit icon-white\"></i>编辑</a><a class=\"btn btn-danger\" href=\"/flashsales/#{flashsales['id']}\" data-confirm=\"确认删除?\" data-method=\"delete\" rel=\"nofollow\"><i class=\"icon-trash icon-white\"></i>删除</a>"
                                           ]
@@ -38,7 +37,6 @@ class FlashsalesController < ApplicationController
     @init_new_flashsales         = true;
     
     render 'new'
-   
   end
   
   # POST /flashsales/create
@@ -46,9 +44,9 @@ class FlashsalesController < ApplicationController
     eventrule_info                                = JSON.parse( params[:body] ) 
     logger_info                                   = "创建活动 闪购-" + Time.parse(eventrule_info['from_date']).getlocal().strftime("%Y-%m-%d")
     begin
-      Eventrule.create_eventrule eventrule_info
+      flashsales                                  = internal_api( '/flashsales', params[:body] )
       admin_logger logger_info, SUCCESS
-      redirect_to :action => 'index', :notice => '闪购创建成功'  
+      redirect_to :action => 'edit', :id => flashsales['id'], :notice => '闪购创建成功'  
     rescue => err
       admin_logger logger_info, FAILED
       redirect_to :action => 'new', :notice => err.message 
